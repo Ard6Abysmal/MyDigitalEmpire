@@ -10,12 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@analytics/google-analytics": "^1.1.0",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
+    "analytics": "^0.8.19",
     "axios": "^1.13.2",
     "framer-motion": "^12.23.26",
+    "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-ga4": "^2.1.0",
     "react-router-dom": "^7.10.1",
     "use-sound": "^5.0.0"
   },

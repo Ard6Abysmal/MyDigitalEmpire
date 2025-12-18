@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
+import { trackDownload, trackButtonClick } from '../services/analytics'; // NEW
 
 const About = () => {
   const skills = [
@@ -53,6 +54,39 @@ const About = () => {
     'empire-pink': '#ec4899',
   };
 
+  // Handle resume download with analytics tracking
+  const handleDownloadResume = async () => {
+    // Track download event
+    trackDownload('Resume.pdf');
+    
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/api/resume/download`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to download resume');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading resume:', error);
+      alert('Failed to download resume. Please try again.');
+    }
+  };
+
+  // Track project card clicks
+  const handleProjectClick = (projectTitle) => {
+    trackButtonClick(`Current Work - ${projectTitle}`);
+  };
+
   return (
     <div className="relative min-h-screen bg-true-black pt-24 pb-16">
       <ParticleBackground theme="default" />
@@ -71,6 +105,17 @@ const About = () => {
             A passionate developer building ambitious projects across AI, Web3, and Full-Stack development.
             Learning fast, building faster.
           </p>
+          
+          {/* Download Resume Button */}
+          <motion.button
+            onClick={handleDownloadResume}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.8)] transition-all inline-flex items-center gap-2"
+          >
+            <span>📄</span>
+            Download Resume
+          </motion.button>
         </motion.div>
 
         {/* Introduction Card */}
@@ -194,7 +239,8 @@ const About = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 + idx * 0.1 }}
                 whileHover={{ y: -10 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border hover:border-empire-cyan/50 transition-all shadow-lg"
+                onClick={() => handleProjectClick(project.title)}
+                className="p-6 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border hover:border-empire-cyan/50 transition-all shadow-lg cursor-pointer"
               >
                 <div className="text-5xl mb-4 animate-float">{project.icon}</div>
                 <h3 className="text-xl font-bold text-empire-text mb-2">{project.title}</h3>

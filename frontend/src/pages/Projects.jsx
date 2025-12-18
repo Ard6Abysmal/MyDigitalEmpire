@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
+import { trackProjectView, trackExternalLink, trackButtonClick } from '../services/analytics'; // NEW
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -28,6 +29,23 @@ const Projects = () => {
   const filteredProjects = filter === 'All' 
     ? projects 
     : projects.filter(p => p.category === filter);
+
+  // Track project card click
+  const handleProjectClick = (projectName) => {
+    trackProjectView(projectName);
+  };
+
+  // Track external link clicks (GitHub, live demo, etc.)
+  const handleExternalLink = (url, linkType, projectName) => {
+    trackExternalLink(`${linkType} - ${projectName}: ${url}`);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  // Track category filter changes
+  const handleFilterChange = (category) => {
+    setFilter(category);
+    trackButtonClick(`Filter - ${category}`);
+  };
 
   if (loading) {
     return (
@@ -69,7 +87,7 @@ const Projects = () => {
           {categories.map((category) => (
             <button
               key={category}
-              onClick={() => setFilter(category)}
+              onClick={() => handleFilterChange(category)}
               className={`px-6 py-2 rounded-full font-semibold transition-all ${
                 filter === category
                   ? 'bg-gradient-to-r from-empire-purple to-empire-cyan text-white shadow-[0_0_20px_rgba(168,85,247,0.5)]'
@@ -90,7 +108,8 @@ const Projects = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + idx * 0.1 }}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="group relative p-6 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border hover:border-empire-purple/50 transition-all overflow-hidden"
+              onClick={() => handleProjectClick(project.name)}
+              className="group relative p-6 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border hover:border-empire-purple/50 transition-all overflow-hidden cursor-pointer"
             >
               {/* Glow effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-empire-purple/0 via-empire-cyan/0 to-empire-green/0 group-hover:from-empire-purple/10 group-hover:via-empire-cyan/10 group-hover:to-empire-green/10 transition-all duration-500"></div>
@@ -132,10 +151,45 @@ const Projects = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
-                  <button className="flex-1 py-2 rounded-lg bg-empire-purple/20 text-empire-purple border border-empire-purple/30 hover:bg-empire-purple hover:text-white transition-all font-semibold">
-                    View Details
-                  </button>
-                  <button className="px-4 py-2 rounded-lg bg-dark-bg border border-dark-border hover:border-empire-cyan text-empire-cyan transition-all">
+                  {project.github_url && (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering card click
+                        handleExternalLink(project.github_url, 'GitHub', project.name);
+                      }}
+                      className="flex-1 py-2 rounded-lg bg-dark-bg border border-dark-border hover:border-empire-purple text-empire-purple transition-all font-semibold text-sm"
+                    >
+                      💻 GitHub
+                    </button>
+                  )}
+                  
+                  {project.live_url && (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering card click
+                        handleExternalLink(project.live_url, 'Live Demo', project.name);
+                      }}
+                      className="flex-1 py-2 rounded-lg bg-empire-purple/20 text-empire-purple border border-empire-purple/30 hover:bg-empire-purple hover:text-white transition-all font-semibold text-sm"
+                    >
+                      🚀 Live Demo
+                    </button>
+                  )}
+                  
+                  {!project.github_url && !project.live_url && (
+                    <button 
+                      className="flex-1 py-2 rounded-lg bg-empire-purple/20 text-empire-purple border border-empire-purple/30 hover:bg-empire-purple hover:text-white transition-all font-semibold"
+                    >
+                      View Details
+                    </button>
+                  )}
+                  
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProjectClick(project.name);
+                    }}
+                    className="px-4 py-2 rounded-lg bg-dark-bg border border-dark-border hover:border-empire-cyan text-empire-cyan transition-all"
+                  >
                     →
                   </button>
                 </div>

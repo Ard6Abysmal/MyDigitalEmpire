@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
+import { trackBlogView } from '../services/analytics'; // NEW
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -14,6 +15,13 @@ const BlogPost = () => {
   useEffect(() => {
     fetchPost();
   }, [slug]);
+
+  // Track blog post view when post is loaded
+  useEffect(() => {
+    if (post) {
+      trackBlogView(post.title);
+    }
+  }, [post]);
 
   const fetchPost = async () => {
     try {
@@ -128,7 +136,7 @@ const BlogPost = () => {
             </div>
 
             {/* Tags */}
-            {post.tags.length > 0 && (
+            {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-dark-border">
                 {post.tags.map((tag, i) => (
                   <span

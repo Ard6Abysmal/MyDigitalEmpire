@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { soundManager } from '../../utils/sounds';
+import { trackChatMessage } from '../../services/analytics'; // NEW
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -166,6 +167,9 @@ const ChatWidget = () => {
 
     soundManager.playClick();
 
+    // Track chat message sent (NEW)
+    trackChatMessage();
+
     const userMessage = {
       role: 'user',
       content: inputMessage,
@@ -259,7 +263,7 @@ const ChatWidget = () => {
               transition: { duration: 0.4, ease: "easeInOut" }
             }}
             transition={{ 
-              x: { duration: 4.5, ease: [0.25, 0.1, 0.25, 1] }, // Smooth cubic-bezier [web:114]
+              x: { duration: 4.5, ease: [0.25, 0.1, 0.25, 1] },
               y: { duration: 4.5, ease: [0.25, 0.1, 0.25, 1] },
               scale: { type: "spring", stiffness: 200, damping: 20 }
             }}

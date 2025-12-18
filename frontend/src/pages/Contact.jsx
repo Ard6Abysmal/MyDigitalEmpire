@@ -2,6 +2,7 @@ import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
+import { trackContactSubmit, trackSocialClick } from '../services/analytics'; // NEW
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,19 +11,38 @@ const Contact = () => {
     message: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Track form submission
+    trackContactSubmit();
+    
     console.log('Form submitted:', formData);
     // Add your form submission logic here
     alert('Message sent! (Note: Connect this to a backend API)');
+    
+    // Reset form after submission (optional)
+    setFormData({
+      name: '',
+      email: '',
+      message: ''
+    });
   };
 
   const socials = [
-    { name: 'GitHub', icon: '💻', link: 'https://github.com/yourusername', color: 'empire-purple' },
+    { name: 'GitHub', icon: '💻', link: 'https://github.com/Ard6Abysmal', color: 'empire-purple' },
     { name: 'LinkedIn', icon: '💼', link: 'https://linkedin.com/in/yourusername', color: 'empire-cyan' },
     { name: 'Twitter', icon: '🐦', link: 'https://twitter.com/yourusername', color: 'empire-green' },
-    { name: 'Email', icon: '📧', link: 'mailto:your.email@example.com', color: 'empire-orange' },
+    { name: 'Email', icon: '📧', link: 'mailto:asuragodamal6purdemoneuabeyond@gmail.com', color: 'empire-orange' },
   ];
+
+  const handleSocialClick = (platformName, url) => {
+    // Track social media click
+    trackSocialClick(platformName);
+    
+    // Open link
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div className="relative min-h-screen bg-true-black pt-24 pb-16">
@@ -107,23 +127,21 @@ const Contact = () => {
               
               <div className="space-y-4">
                 {socials.map((social, idx) => (
-                  <motion.a
+                  <motion.button
                     key={social.name}
-                    href={social.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={() => handleSocialClick(social.name, social.link)}
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 + idx * 0.1 }}
                     whileHover={{ x: 10 }}
-                    className={`flex items-center gap-4 p-4 rounded-xl bg-dark-bg border border-dark-border hover:border-${social.color}/50 transition-all group`}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl bg-dark-bg border border-dark-border hover:border-${social.color}/50 transition-all group cursor-pointer text-left`}
                   >
                     <span className="text-3xl group-hover:animate-bounce">{social.icon}</span>
                     <div>
                       <p className="font-semibold text-empire-text">{social.name}</p>
                       <p className="text-sm text-text-muted">Connect on {social.name}</p>
                     </div>
-                  </motion.a>
+                  </motion.button>
                 ))}
               </div>
             </div>

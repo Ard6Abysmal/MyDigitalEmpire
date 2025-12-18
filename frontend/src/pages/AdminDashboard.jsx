@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import { BarChart3, FileText, FolderKanban } from 'lucide-react'; // NEW
 import ParticleBackground from '../components/ParticleBackground';
 
 const AdminDashboard = () => {
@@ -10,12 +11,12 @@ const AdminDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',           // Changed from 'title' to 'name'
+    name: '',
     description: '',
     category: 'Web App',
-    tech: '',           // Changed from 'tags' to 'tech'
+    tech: '',
     github_url: '',
-    live_url: '',       // Changed from 'demo_url' to 'live_url'
+    live_url: '',
     image_url: '',
     status: 'completed'
   });
@@ -23,6 +24,32 @@ const AdminDashboard = () => {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const adminToken = localStorage.getItem('adminToken');
+
+  // Admin navigation cards
+  const adminCards = [
+    {
+      title: 'Projects',
+      description: 'Manage portfolio projects',
+      icon: FolderKanban,
+      path: null, // Current page
+      gradient: 'from-purple-500 to-pink-500',
+      count: projects.length,
+    },
+    {
+      title: 'Resume',
+      description: 'Upload and manage resume data',
+      icon: FileText,
+      path: '/admin/resume',
+      gradient: 'from-cyan-500 to-blue-500',
+    },
+    {
+      title: 'Analytics',
+      description: 'View portfolio analytics and visitor insights',
+      icon: BarChart3,
+      path: '/admin/analytics',
+      gradient: 'from-orange-500 to-red-500',
+    },
+  ];
 
   useEffect(() => {
     if (!adminToken) {
@@ -54,7 +81,7 @@ const AdminDashboard = () => {
     
     const projectData = {
       ...formData,
-      tech: formData.tech.split(',').map(t => t.trim()).filter(Boolean)  // Changed from 'tags' to 'tech'
+      tech: formData.tech.split(',').map(t => t.trim()).filter(Boolean)
     };
 
     try {
@@ -101,12 +128,12 @@ const AdminDashboard = () => {
   const handleEdit = (project) => {
     setEditingProject(project);
     setFormData({
-      name: project.name,                              // Changed from 'title' to 'name'
+      name: project.name,
       description: project.description,
       category: project.category,
-      tech: project.tech.join(', '),                   // Changed from 'tags' to 'tech'
+      tech: project.tech.join(', '),
       github_url: project.github_url || '',
-      live_url: project.live_url || '',                // Changed from 'demo_url' to 'live_url'
+      live_url: project.live_url || '',
       image_url: project.image_url || '',
       status: project.status
     });
@@ -151,33 +178,84 @@ const AdminDashboard = () => {
             <h1 className="text-5xl font-black bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
               Admin Dashboard
             </h1>
-            <p className="text-text-muted mt-2">Manage your portfolio projects</p>
+            <p className="text-text-muted mt-2">Manage your portfolio</p>
           </div>
           
-          {/* Updated Header Buttons */}
-          <div className="flex gap-4">
-            <button
-              onClick={() => navigate('/admin/resume')}
-              className="px-6 py-3 bg-empire-cyan text-white font-bold rounded-xl hover:bg-empire-cyan/80 transition-all"
-            >
-              📄 Manage Resume
-            </button>
-            <button
-              onClick={() => {
-                resetForm();
-                setShowModal(true);
-              }}
-              className="px-6 py-3 bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold rounded-xl hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all"
-            >
-              + Add Project
-            </button>
-            <button
-              onClick={handleLogout}
-              className="px-6 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all"
-            >
-              Logout
-            </button>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="px-6 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all"
+          >
+            Logout
+          </button>
+        </div>
+
+        {/* Quick Access Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {adminCards.map((card, index) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => card.path && navigate(card.path)}
+                className={`
+                  relative p-6 rounded-2xl border border-dark-border overflow-hidden
+                  ${card.path ? 'cursor-pointer hover:scale-105' : 'cursor-default'}
+                  transition-all duration-300 group
+                `}
+                style={{
+                  background: 'linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)'
+                }}
+              >
+                {/* Gradient Overlay */}
+                <div 
+                  className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-10 group-hover:opacity-20 transition-opacity`}
+                />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${card.gradient}`}>
+                      <Icon size={24} className="text-white" />
+                    </div>
+                    {card.count !== undefined && (
+                      <span className="text-2xl font-bold text-empire-text">{card.count}</span>
+                    )}
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-empire-text mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-text-muted text-sm">
+                    {card.description}
+                  </p>
+                  
+                  {card.path && (
+                    <div className="mt-4 flex items-center text-empire-purple text-sm font-semibold group-hover:text-empire-cyan transition-colors">
+                      Open →
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Actions Bar */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-empire-text">
+            Projects Management
+          </h2>
+          <button
+            onClick={() => {
+              resetForm();
+              setShowModal(true);
+            }}
+            className="px-6 py-3 bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold rounded-xl hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all"
+          >
+            + Add Project
+          </button>
         </div>
 
         {/* Projects Table */}

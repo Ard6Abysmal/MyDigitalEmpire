@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
-import { trackProjectView, trackExternalLink, trackButtonClick } from '../services/analytics'; // NEW
+import { trackProjectView, trackExternalLink, trackButtonClick } from '../services/analytics';
+import { useTheme } from '../context/ThemeContext'; // NEW
 
 const Projects = () => {
+  const { isDark } = useTheme(); // NEW - Get theme state
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
@@ -49,17 +51,21 @@ const Projects = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-true-black flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${
+        isDark ? 'bg-true-black' : 'bg-light-bg'
+      }`}>
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-empire-purple border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-empire-text">Loading projects...</p>
+          <p className={isDark ? 'text-empire-text' : 'text-light-text'}>Loading projects...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen bg-true-black pt-24 pb-16">
+    <div className={`relative min-h-screen pt-24 pb-16 ${
+      isDark ? 'bg-true-black' : 'bg-light-bg'
+    }`}>
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -72,7 +78,7 @@ const Projects = () => {
           <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
             Projects
           </h1>
-          <p className="text-xl text-text-muted">
+          <p className={`text-xl ${isDark ? 'text-text-muted' : 'text-light-muted'}`}>
             Explore my journey across AI, Web3, and Full-Stack Development
           </p>
         </motion.div>
@@ -91,7 +97,9 @@ const Projects = () => {
               className={`px-6 py-2 rounded-full font-semibold transition-all ${
                 filter === category
                   ? 'bg-gradient-to-r from-empire-purple to-empire-cyan text-white shadow-[0_0_20px_rgba(168,85,247,0.5)]'
-                  : 'bg-dark-surface text-text-muted border border-dark-border hover:border-empire-purple/50'
+                  : isDark 
+                    ? 'bg-dark-surface text-text-muted border border-dark-border hover:border-empire-purple/50'
+                    : 'bg-light-surface text-light-muted border border-light-border hover:border-empire-purple/50'
               }`}
             >
               {category}
@@ -109,7 +117,11 @@ const Projects = () => {
               transition={{ delay: 0.3 + idx * 0.1 }}
               whileHover={{ y: -10, scale: 1.02 }}
               onClick={() => handleProjectClick(project.name)}
-              className="group relative p-6 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border hover:border-empire-purple/50 transition-all overflow-hidden cursor-pointer"
+              className={`group relative p-6 rounded-2xl border hover:border-empire-purple/50 transition-all overflow-hidden cursor-pointer ${
+                isDark 
+                  ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-dark-border' 
+                  : 'bg-gradient-to-br from-light-surface to-light-bg border-light-border'
+              }`}
             >
               {/* Glow effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-empire-purple/0 via-empire-cyan/0 to-empire-green/0 group-hover:from-empire-purple/10 group-hover:via-empire-cyan/10 group-hover:to-empire-green/10 transition-all duration-500"></div>
@@ -117,7 +129,11 @@ const Projects = () => {
               <div className="relative z-10">
                 {/* Status Badge */}
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs px-3 py-1 rounded-full bg-dark-bg border border-dark-border text-text-muted">
+                  <span className={`text-xs px-3 py-1 rounded-full border ${
+                    isDark 
+                      ? 'bg-dark-bg border-dark-border text-text-muted' 
+                      : 'bg-light-bg border-light-border text-light-muted'
+                  }`}>
                     {project.category}
                   </span>
                   <span className={`text-xs px-3 py-1 rounded-full font-semibold ${
@@ -129,11 +145,15 @@ const Projects = () => {
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold text-empire-text mb-3 group-hover:text-empire-purple transition-colors">
+                <h3 className={`text-2xl font-bold mb-3 group-hover:text-empire-purple transition-colors ${
+                  isDark ? 'text-empire-text' : 'text-light-text'
+                }`}>
                   {project.name}
                 </h3>
                 
-                <p className="text-text-muted text-sm mb-4 leading-relaxed">
+                <p className={`text-sm mb-4 leading-relaxed ${
+                  isDark ? 'text-text-muted' : 'text-light-muted'
+                }`}>
                   {project.description}
                 </p>
 
@@ -157,7 +177,9 @@ const Projects = () => {
                         e.stopPropagation(); // Prevent triggering card click
                         handleExternalLink(project.github_url, 'GitHub', project.name);
                       }}
-                      className="flex-1 py-2 rounded-lg bg-dark-bg border border-dark-border hover:border-empire-purple text-empire-purple transition-all font-semibold text-sm"
+                      className={`flex-1 py-2 rounded-lg border hover:border-empire-purple text-empire-purple transition-all font-semibold text-sm ${
+                        isDark ? 'bg-dark-bg border-dark-border' : 'bg-light-bg border-light-border'
+                      }`}
                     >
                       💻 GitHub
                     </button>
@@ -188,7 +210,9 @@ const Projects = () => {
                       e.stopPropagation();
                       handleProjectClick(project.name);
                     }}
-                    className="px-4 py-2 rounded-lg bg-dark-bg border border-dark-border hover:border-empire-cyan text-empire-cyan transition-all"
+                    className={`px-4 py-2 rounded-lg border hover:border-empire-cyan text-empire-cyan transition-all ${
+                      isDark ? 'bg-dark-bg border-dark-border' : 'bg-light-bg border-light-border'
+                    }`}
                   >
                     →
                   </button>
@@ -200,7 +224,9 @@ const Projects = () => {
 
         {filteredProjects.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-text-muted text-xl">No projects found in this category.</p>
+            <p className={`text-xl ${isDark ? 'text-text-muted' : 'text-light-muted'}`}>
+              No projects found in this category.
+            </p>
           </div>
         )}
       </div>

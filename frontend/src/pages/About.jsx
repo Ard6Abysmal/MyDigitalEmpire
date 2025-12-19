@@ -1,9 +1,12 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
-import { trackDownload, trackButtonClick } from '../services/analytics'; // NEW
+import { trackDownload, trackButtonClick } from '../services/analytics';
+import { useTheme } from '../context/ThemeContext'; // NEW
 
 const About = () => {
+  const { isDark } = useTheme(); // NEW - Get theme state
+
   const skills = [
     { name: 'Python', level: 'Expert', years: '3+ years', color: 'empire-purple', stars: 5 },
     { name: 'JavaScript/React', level: 'Advanced', years: '2+ years', color: 'empire-cyan', stars: 4 },
@@ -88,7 +91,9 @@ const About = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-true-black pt-24 pb-16">
+    <div className={`relative min-h-screen pt-24 pb-16 ${
+      isDark ? 'bg-true-black' : 'bg-light-bg'
+    }`}>
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -101,7 +106,9 @@ const About = () => {
           <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
             About Me
           </h1>
-          <p className="text-xl text-text-muted max-w-3xl mx-auto">
+          <p className={`text-xl max-w-3xl mx-auto ${
+            isDark ? 'text-text-muted' : 'text-light-muted'
+          }`}>
             A passionate developer building ambitious projects across AI, Web3, and Full-Stack development.
             Learning fast, building faster.
           </p>
@@ -123,17 +130,25 @@ const About = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border shadow-[0_0_50px_rgba(168,85,247,0.1)]"
+          className={`mb-16 p-8 rounded-2xl border shadow-[0_0_50px_rgba(168,85,247,0.1)] ${
+            isDark 
+              ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-dark-border' 
+              : 'bg-gradient-to-br from-light-surface to-light-bg border-light-border'
+          }`}
         >
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <h2 className="text-3xl font-bold text-empire-purple mb-4">Who I Am</h2>
-              <p className="text-empire-text/80 leading-relaxed mb-4">
+              <p className={`leading-relaxed mb-4 ${
+                isDark ? 'text-empire-text/80' : 'text-light-text/80'
+              }`}>
                 I'm a computer science student with a burning passion for creating technology that matters.
                 From deep learning models for underwater image enhancement to blockchain-powered gaming systems,
                 I love tackling complex challenges.
               </p>
-              <p className="text-empire-text/80 leading-relaxed">
+              <p className={`leading-relaxed ${
+                isDark ? 'text-empire-text/80' : 'text-light-text/80'
+              }`}>
                 My journey started with curiosity about how things work and evolved into a mission to build
                 an entire "Digital Empire" of interconnected projects spanning AI, gaming, blockchain, and beyond.
               </p>
@@ -154,7 +169,9 @@ const About = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + idx * 0.1 }}
-                    className="flex items-center gap-3 text-empire-text/80"
+                    className={`flex items-center gap-3 ${
+                      isDark ? 'text-empire-text/80' : 'text-light-text/80'
+                    }`}
                   >
                     <span className="text-empire-green text-xl">✓</span>
                     {item}
@@ -183,10 +200,14 @@ const About = () => {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + idx * 0.1 }}
-                className="p-6 rounded-xl bg-dark-surface border border-dark-border hover:border-empire-purple/50 transition-all"
+                className={`p-6 rounded-xl border hover:border-empire-purple/50 transition-all ${
+                  isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+                }`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-empire-text font-semibold text-lg">{skill.name}</span>
+                  <span className={`font-semibold text-lg ${
+                    isDark ? 'text-empire-text' : 'text-light-text'
+                  }`}>{skill.name}</span>
                   <span 
                     className="font-bold text-sm px-3 py-1 rounded-full border"
                     style={{
@@ -207,14 +228,16 @@ const About = () => {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.6 + idx * 0.1 + i * 0.05 }}
-                      className={`text-2xl ${i < skill.stars ? 'text-yellow-400' : 'text-gray-700'}`}
+                      className={`text-2xl ${i < skill.stars ? 'text-yellow-400' : (isDark ? 'text-gray-700' : 'text-gray-300')}`}
                     >
                       ★
                     </motion.span>
                   ))}
                 </div>
                 
-                <p className="text-text-muted text-sm">{skill.years} experience</p>
+                <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-light-muted'}`}>
+                  {skill.years} experience
+                </p>
               </motion.div>
             ))}
           </div>
@@ -240,11 +263,19 @@ const About = () => {
                 transition={{ delay: 0.7 + idx * 0.1 }}
                 whileHover={{ y: -10 }}
                 onClick={() => handleProjectClick(project.title)}
-                className="p-6 rounded-2xl bg-gradient-to-br from-dark-surface to-dark-bg border border-dark-border hover:border-empire-cyan/50 transition-all shadow-lg cursor-pointer"
+                className={`p-6 rounded-2xl border hover:border-empire-cyan/50 transition-all shadow-lg cursor-pointer ${
+                  isDark 
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-dark-border' 
+                    : 'bg-gradient-to-br from-light-surface to-light-bg border-light-border'
+                }`}
               >
                 <div className="text-5xl mb-4 animate-float">{project.icon}</div>
-                <h3 className="text-xl font-bold text-empire-text mb-2">{project.title}</h3>
-                <p className="text-text-muted text-sm mb-4">{project.description}</p>
+                <h3 className={`text-xl font-bold mb-2 ${
+                  isDark ? 'text-empire-text' : 'text-light-text'
+                }`}>{project.title}</h3>
+                <p className={`text-sm mb-4 ${
+                  isDark ? 'text-text-muted' : 'text-light-muted'
+                }`}>{project.description}</p>
                 
                 <div className="mb-4">
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-empire-green/20 text-empire-green border border-empire-green/30">
@@ -287,15 +318,23 @@ const About = () => {
                 className={`relative flex items-center mb-12 ${idx % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
               >
                 <div className={`w-1/2 ${idx % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                  <div className="p-4 rounded-xl bg-dark-surface border border-dark-border hover:border-empire-purple/50 transition-all">
+                  <div className={`p-4 rounded-xl border hover:border-empire-purple/50 transition-all ${
+                    isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+                  }`}>
                     <span className="text-empire-purple font-bold">{item.year}</span>
-                    <h3 className="text-xl font-bold text-empire-text mt-2">{item.title}</h3>
-                    <p className="text-text-muted text-sm mt-1">{item.desc}</p>
+                    <h3 className={`text-xl font-bold mt-2 ${
+                      isDark ? 'text-empire-text' : 'text-light-text'
+                    }`}>{item.title}</h3>
+                    <p className={`text-sm mt-1 ${
+                      isDark ? 'text-text-muted' : 'text-light-muted'
+                    }`}>{item.desc}</p>
                   </div>
                 </div>
                 
                 {/* Center dot */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-empire-purple border-4 border-true-black shadow-[0_0_20px_rgba(168,85,247,0.8)]"></div>
+                <div className={`absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-empire-purple border-4 shadow-[0_0_20px_rgba(168,85,247,0.8)] ${
+                  isDark ? 'border-true-black' : 'border-white'
+                }`}></div>
               </motion.div>
             ))}
           </div>

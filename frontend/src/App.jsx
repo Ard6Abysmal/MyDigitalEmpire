@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navigation/Navbar';
 import ChatWidget from './components/Chatbot/ChatWidget';
-import { initGA, trackPageView } from './services/analytics'; // NEW
+import ParticleBackground from './components/ParticleBackground'; // NEW
+import { initGA, trackPageView } from './services/analytics';
+import { useTheme } from './context/ThemeContext'; // NEW
 
 // Import pages
 import Home from './pages/Home';
@@ -17,7 +19,7 @@ import BlogPost from './pages/BlogPost';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminResume from './pages/AdminResume';
-import Analytics from './pages/Analytics'; // NEW
+import Analytics from './pages/Analytics';
 
 // Track page views on route change
 function AnalyticsTracker() {
@@ -31,6 +33,8 @@ function AnalyticsTracker() {
 }
 
 function App() {
+  const { isDark } = useTheme(); // NEW - Get theme state
+
   // const [projects, setProjects] = useState([]);
   // const [loading, setLoading] = useState(true);
 
@@ -72,7 +76,14 @@ function App() {
     // </div>
     
     <Router>
-      <div className="min-h-screen bg-true-black">
+      <div 
+        className={`min-h-screen transition-colors duration-300 ${
+          isDark 
+            ? 'bg-true-black text-empire-text' 
+            : 'bg-light-bg text-light-text'
+        }`}
+      >
+        <ParticleBackground /> {/* Background particles */}
         <Navbar />
         <AnalyticsTracker /> {/* Track page views */}
 
@@ -87,7 +98,7 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/resume" element={<AdminResume />} />
-          <Route path="/admin/analytics" element={<Analytics />} /> {/* NEW */}
+          <Route path="/admin/analytics" element={<Analytics />} /> {/* Analytics page */}
         </Routes>
 
         <ChatWidget />

@@ -3,8 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { soundManager } from '../../utils/sounds';
+import ThemeToggle from '../ThemeToggle';
+import { useTheme } from '../../context/ThemeContext'; // NEW
 
 const Navbar = () => {
+  const { isDark } = useTheme(); // NEW - Get theme state
   const [scrolled, setScrolled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const location = useLocation();
@@ -59,7 +62,9 @@ const Navbar = () => {
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'bg-true-black/95 backdrop-blur-md border-b border-dark-border shadow-lg'
+          ? isDark 
+            ? 'bg-true-black/95 backdrop-blur-md border-b border-dark-border shadow-lg'
+            : 'bg-white/95 backdrop-blur-md border-b border-light-border shadow-lg'
           : 'bg-transparent'
       }`}
     >
@@ -79,7 +84,9 @@ const Navbar = () => {
               <h1 className="text-xl font-bold bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
                 Digital Empire
               </h1>
-              <p className="text-xs text-text-muted">Portfolio & Projects</p>
+              <p className={`text-xs ${
+                isDark ? 'text-text-muted' : 'text-light-muted'
+              }`}>Portfolio & Projects</p>
             </div>
           </Link>
 
@@ -94,7 +101,9 @@ const Navbar = () => {
                 className={`relative px-4 py-2 rounded-lg transition-all group ${
                   location.pathname === item.path
                     ? 'text-empire-purple'
-                    : 'text-empire-text hover:text-empire-cyan'
+                    : isDark
+                      ? 'text-empire-text hover:text-empire-cyan'
+                      : 'text-light-text hover:text-empire-cyan'
                 }`}
               >
                 <span className="hidden md:inline">{item.name}</span>
@@ -121,13 +130,20 @@ const Navbar = () => {
               <span>📄</span>
             </button>
 
+            {/* Theme Toggle */}
+            <div className="ml-2">
+              <ThemeToggle />
+            </div>
+
             {/* Sound Toggle */}
             <button
               onClick={toggleSound}
               className={`ml-2 p-2 rounded-lg transition-all ${
                 soundEnabled
                   ? 'text-empire-green bg-empire-green/10 border border-empire-green/30'
-                  : 'text-text-muted bg-dark-surface border border-dark-border'
+                  : isDark
+                    ? 'text-text-muted bg-dark-surface border border-dark-border'
+                    : 'text-light-muted bg-light-surface border border-light-border'
               }`}
               title={soundEnabled ? 'Sound On' : 'Sound Off'}
             >

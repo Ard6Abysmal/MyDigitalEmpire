@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
+import { useTheme } from '../context/ThemeContext'; // NEW
 
 const Blog = () => {
+  const { isDark } = useTheme(); // NEW - Get theme state
+  
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -32,14 +35,18 @@ const Blog = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-true-black flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${
+        isDark ? 'bg-true-black' : 'bg-light-bg'
+      }`}>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-empire-purple"></div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen bg-true-black pt-24 pb-16">
+    <div className={`relative min-h-screen pt-24 pb-16 ${
+      isDark ? 'bg-true-black' : 'bg-light-bg'
+    }`}>
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -52,7 +59,9 @@ const Blog = () => {
           <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
             Blog
           </h1>
-          <p className="text-xl text-text-muted max-w-2xl mx-auto">
+          <p className={`text-xl max-w-2xl mx-auto ${
+            isDark ? 'text-text-muted' : 'text-light-muted'
+          }`}>
             Sharing my journey, learnings, and insights in tech
           </p>
         </motion.div>
@@ -66,7 +75,9 @@ const Blog = () => {
               className={`px-6 py-2 rounded-full font-semibold transition-all ${
                 selectedCategory === cat
                   ? 'bg-gradient-to-r from-empire-purple to-empire-cyan text-white'
-                  : 'bg-dark-surface border border-dark-border text-empire-text hover:border-empire-purple'
+                  : isDark
+                    ? 'bg-dark-surface border border-dark-border text-empire-text hover:border-empire-purple'
+                    : 'bg-light-surface border border-light-border text-light-text hover:border-empire-purple'
               }`}
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -84,7 +95,9 @@ const Blog = () => {
               transition={{ delay: idx * 0.1 }}
             >
               <Link to={`/blog/${post.slug}`}>
-                <div className="bg-dark-surface border border-dark-border rounded-2xl overflow-hidden hover:border-empire-purple transition-all group h-full flex flex-col">
+                <div className={`rounded-2xl overflow-hidden border hover:border-empire-purple transition-all group h-full flex flex-col ${
+                  isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+                }`}>
                   {/* Image */}
                   {post.image_url && (
                     <div className="relative h-48 overflow-hidden">
@@ -110,7 +123,9 @@ const Blog = () => {
                       <span className="text-xs px-3 py-1 rounded-full bg-empire-cyan/20 text-empire-cyan border border-empire-cyan/30">
                         {post.category}
                       </span>
-                      <span className="text-xs text-text-muted">
+                      <span className={`text-xs ${
+                        isDark ? 'text-text-muted' : 'text-light-muted'
+                      }`}>
                         {new Date(post.created_at).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -119,10 +134,14 @@ const Blog = () => {
                       </span>
                     </div>
 
-                    <h2 className="text-xl font-bold text-empire-text mb-2 group-hover:text-empire-purple transition-colors">
+                    <h2 className={`text-xl font-bold mb-2 group-hover:text-empire-purple transition-colors ${
+                      isDark ? 'text-empire-text' : 'text-light-text'
+                    }`}>
                       {post.title}
                     </h2>
-                    <p className="text-text-muted text-sm mb-4 flex-1">
+                    <p className={`text-sm mb-4 flex-1 ${
+                      isDark ? 'text-text-muted' : 'text-light-muted'
+                    }`}>
                       {post.excerpt}
                     </p>
 
@@ -136,7 +155,11 @@ const Blog = () => {
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between text-xs text-text-muted pt-4 border-t border-dark-border">
+                    <div className={`flex items-center justify-between text-xs pt-4 border-t ${
+                      isDark 
+                        ? 'text-text-muted border-dark-border' 
+                        : 'text-light-muted border-light-border'
+                    }`}>
                       <span>By {post.author}</span>
                       <span>{post.views} views</span>
                     </div>
@@ -150,8 +173,12 @@ const Blog = () => {
         {/* Empty State */}
         {posts.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-2xl text-text-muted mb-4">No posts found</p>
-            <p className="text-text-muted">Check back soon for new content!</p>
+            <p className={`text-2xl mb-4 ${
+              isDark ? 'text-text-muted' : 'text-light-muted'
+            }`}>No posts found</p>
+            <p className={isDark ? 'text-text-muted' : 'text-light-muted'}>
+              Check back soon for new content!
+            </p>
           </div>
         )}
       </div>

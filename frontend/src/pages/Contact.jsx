@@ -2,9 +2,12 @@ import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
-import { trackContactSubmit, trackSocialClick } from '../services/analytics'; // NEW
+import { trackContactSubmit, trackSocialClick } from '../services/analytics';
+import { useTheme } from '../context/ThemeContext'; // NEW
 
 const Contact = () => {
+  const { isDark } = useTheme(); // NEW - Get theme state
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,7 +48,9 @@ const Contact = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-true-black pt-24 pb-16">
+    <div className={`relative min-h-screen pt-24 pb-16 ${
+      isDark ? 'bg-true-black' : 'bg-light-bg'
+    }`}>
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-6xl mx-auto px-6">
@@ -57,7 +62,7 @@ const Contact = () => {
           <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
             Get In Touch
           </h1>
-          <p className="text-xl text-text-muted">
+          <p className={`text-xl ${isDark ? 'text-text-muted' : 'text-light-muted'}`}>
             Let's build something amazing together
           </p>
         </motion.div>
@@ -71,35 +76,53 @@ const Contact = () => {
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-empire-text font-semibold mb-2">Name</label>
+                <label className={`block font-semibold mb-2 ${
+                  isDark ? 'text-empire-text' : 'text-light-text'
+                }`}>Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-dark-surface border border-dark-border focus:border-empire-purple focus:outline-none text-empire-text transition-all"
+                  className={`w-full px-4 py-3 rounded-xl border focus:border-empire-purple focus:outline-none transition-all ${
+                    isDark 
+                      ? 'bg-dark-surface border-dark-border text-empire-text' 
+                      : 'bg-light-surface border-light-border text-light-text'
+                  }`}
                   placeholder="Your name"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-empire-text font-semibold mb-2">Email</label>
+                <label className={`block font-semibold mb-2 ${
+                  isDark ? 'text-empire-text' : 'text-light-text'
+                }`}>Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-dark-surface border border-dark-border focus:border-empire-cyan focus:outline-none text-empire-text transition-all"
+                  className={`w-full px-4 py-3 rounded-xl border focus:border-empire-cyan focus:outline-none transition-all ${
+                    isDark 
+                      ? 'bg-dark-surface border-dark-border text-empire-text' 
+                      : 'bg-light-surface border-light-border text-light-text'
+                  }`}
                   placeholder="your.email@example.com"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-empire-text font-semibold mb-2">Message</label>
+                <label className={`block font-semibold mb-2 ${
+                  isDark ? 'text-empire-text' : 'text-light-text'
+                }`}>Message</label>
                 <textarea
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-dark-surface border border-dark-border focus:border-empire-green focus:outline-none text-empire-text transition-all resize-none"
+                  className={`w-full px-4 py-3 rounded-xl border focus:border-empire-green focus:outline-none transition-all resize-none ${
+                    isDark 
+                      ? 'bg-dark-surface border-dark-border text-empire-text' 
+                      : 'bg-light-surface border-light-border text-light-text'
+                  }`}
                   rows="6"
                   placeholder="Tell me about your project..."
                   required
@@ -122,8 +145,12 @@ const Contact = () => {
             transition={{ delay: 0.3 }}
             className="space-y-6"
           >
-            <div className="p-8 rounded-2xl bg-dark-surface border border-dark-border">
-              <h3 className="text-2xl font-bold text-empire-text mb-6">Connect With Me</h3>
+            <div className={`p-8 rounded-2xl border ${
+              isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+            }`}>
+              <h3 className={`text-2xl font-bold mb-6 ${
+                isDark ? 'text-empire-text' : 'text-light-text'
+              }`}>Connect With Me</h3>
               
               <div className="space-y-4">
                 {socials.map((social, idx) => (
@@ -134,21 +161,35 @@ const Contact = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 + idx * 0.1 }}
                     whileHover={{ x: 10 }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl bg-dark-bg border border-dark-border hover:border-${social.color}/50 transition-all group cursor-pointer text-left`}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border hover:border-${social.color}/50 transition-all group cursor-pointer text-left ${
+                      isDark ? 'bg-dark-bg border-dark-border' : 'bg-light-bg border-light-border'
+                    }`}
                   >
                     <span className="text-3xl group-hover:animate-bounce">{social.icon}</span>
                     <div>
-                      <p className="font-semibold text-empire-text">{social.name}</p>
-                      <p className="text-sm text-text-muted">Connect on {social.name}</p>
+                      <p className={`font-semibold ${
+                        isDark ? 'text-empire-text' : 'text-light-text'
+                      }`}>{social.name}</p>
+                      <p className={`text-sm ${
+                        isDark ? 'text-text-muted' : 'text-light-muted'
+                      }`}>Connect on {social.name}</p>
                     </div>
                   </motion.button>
                 ))}
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-empire-purple/10 to-empire-cyan/10 border border-empire-purple/30">
-              <h3 className="text-xl font-bold text-empire-text mb-4">Available For</h3>
-              <ul className="space-y-2 text-text-muted">
+            <div className={`p-8 rounded-2xl border ${
+              isDark 
+                ? 'bg-gradient-to-br from-empire-purple/10 to-empire-cyan/10 border-empire-purple/30' 
+                : 'bg-gradient-to-br from-empire-purple/5 to-empire-cyan/5 border-empire-purple/20'
+            }`}>
+              <h3 className={`text-xl font-bold mb-4 ${
+                isDark ? 'text-empire-text' : 'text-light-text'
+              }`}>Available For</h3>
+              <ul className={`space-y-2 ${
+                isDark ? 'text-text-muted' : 'text-light-muted'
+              }`}>
                 <li>✓ Full-Stack Development Projects</li>
                 <li>✓ AI/ML Consulting</li>
                 <li>✓ Blockchain/Web3 Development</li>

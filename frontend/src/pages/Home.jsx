@@ -3,12 +3,16 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import ParticleBackground from '../components/ParticleBackground';
+import { useTheme } from '../context/ThemeContext'; // NEW
 
 const Home = () => {
   const [meshActive, setMeshActive] = useState(false);
+  const { isDark } = useTheme(); // NEW - Get theme state
 
   return (
-    <div className="relative min-h-screen bg-true-black overflow-hidden">
+    <div className={`relative min-h-screen overflow-hidden ${
+      isDark ? 'bg-true-black' : 'bg-light-bg'
+    }`}>
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 min-h-screen flex flex-col md:flex-row items-center justify-between px-6 py-24 max-w-7xl mx-auto gap-12">
@@ -31,7 +35,9 @@ const Home = () => {
                 height: 'min(55vh, 500px)', // 55% viewport height, max 500px
               }}
             >
-              <div className="w-full h-full rounded-3xl bg-dark-surface overflow-hidden relative">
+              <div className={`w-full h-full rounded-3xl overflow-hidden relative ${
+                isDark ? 'bg-dark-surface' : 'bg-light-surface'
+              }`}>
                 {/* Your Photo */}
                 <img 
                   src="/your-photo.jpg" 
@@ -86,9 +92,13 @@ const Home = () => {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-empire-green text-true-black px-6 py-2 rounded-full text-sm font-bold shadow-lg border-2 border-true-black whitespace-nowrap z-20"
+              className={`absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-empire-green px-6 py-2 rounded-full text-sm font-bold shadow-lg whitespace-nowrap z-20 ${
+                isDark ? 'text-true-black border-2 border-true-black' : 'text-white border-2 border-white'
+              }`}
             >
-              <span className="inline-block w-2 h-2 bg-true-black rounded-full animate-pulse mr-2"></span>
+              <span className={`inline-block w-2 h-2 rounded-full animate-pulse mr-2 ${
+                isDark ? 'bg-true-black' : 'bg-white'
+              }`}></span>
               Available for Projects
             </motion.div>
           </div>
@@ -121,7 +131,9 @@ const Home = () => {
           </div>
 
           {/* Description */}
-          <p className="text-lg md:text-xl text-text-muted mb-8 leading-relaxed">
+          <p className={`text-lg md:text-xl mb-8 leading-relaxed ${
+            isDark ? 'text-text-muted' : 'text-light-muted'
+          }`}>
             Building the future with <span className="text-empire-purple font-bold">AI/ML</span>,{' '}
             <span className="text-empire-cyan font-bold">Web3</span>, and{' '}
             <span className="text-empire-green font-bold">Full-Stack Development</span>.

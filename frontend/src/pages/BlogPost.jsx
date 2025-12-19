@@ -3,9 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
-import { trackBlogView } from '../services/analytics'; // NEW
+import { trackBlogView } from '../services/analytics';
+import { useTheme } from '../context/ThemeContext'; // NEW
 
 const BlogPost = () => {
+  const { isDark } = useTheme(); // NEW - Get theme state
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,9 @@ const BlogPost = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-true-black flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${
+        isDark ? 'bg-true-black' : 'bg-light-bg'
+      }`}>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-empire-purple"></div>
       </div>
     );
@@ -45,9 +49,13 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-true-black flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${
+        isDark ? 'bg-true-black' : 'bg-light-bg'
+      }`}>
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-empire-text mb-4">Post not found</h2>
+          <h2 className={`text-3xl font-bold mb-4 ${
+            isDark ? 'text-empire-text' : 'text-light-text'
+          }`}>Post not found</h2>
           <Link to="/blog" className="text-empire-purple hover:underline">
             ← Back to Blog
           </Link>
@@ -57,7 +65,9 @@ const BlogPost = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-true-black pt-24 pb-16">
+    <div className={`relative min-h-screen pt-24 pb-16 ${
+      isDark ? 'bg-true-black' : 'bg-light-bg'
+    }`}>
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-4xl mx-auto px-6">
@@ -72,7 +82,9 @@ const BlogPost = () => {
         <motion.article
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-dark-surface border border-dark-border rounded-2xl overflow-hidden"
+          className={`rounded-2xl overflow-hidden border ${
+            isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+          }`}
         >
           {/* Header Image */}
           {post.image_url && (
@@ -95,39 +107,53 @@ const BlogPost = () => {
               <span className="px-4 py-1.5 rounded-full bg-empire-cyan/20 text-empire-cyan border border-empire-cyan/30 text-sm font-semibold">
                 {post.category}
               </span>
-              <span className="text-text-muted text-sm">
+              <span className={`text-sm ${
+                isDark ? 'text-text-muted' : 'text-light-muted'
+              }`}>
                 {new Date(post.created_at).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric'
                 })}
               </span>
-              <span className="text-text-muted text-sm">
+              <span className={`text-sm ${
+                isDark ? 'text-text-muted' : 'text-light-muted'
+              }`}>
                 {post.views} views
               </span>
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-black text-empire-text mb-6">
+            <h1 className={`text-4xl md:text-5xl font-black mb-6 ${
+              isDark ? 'text-empire-text' : 'text-light-text'
+            }`}>
               {post.title}
             </h1>
 
             {/* Author */}
-            <div className="flex items-center gap-3 mb-8 pb-8 border-b border-dark-border">
+            <div className={`flex items-center gap-3 mb-8 pb-8 border-b ${
+              isDark ? 'border-dark-border' : 'border-light-border'
+            }`}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-empire-purple to-empire-cyan flex items-center justify-center text-white font-bold text-xl">
                 {post.author.charAt(0)}
               </div>
               <div>
-                <p className="text-empire-text font-semibold">{post.author}</p>
-                <p className="text-text-muted text-sm">Developer & Writer</p>
+                <p className={`font-semibold ${
+                  isDark ? 'text-empire-text' : 'text-light-text'
+                }`}>{post.author}</p>
+                <p className={`text-sm ${
+                  isDark ? 'text-text-muted' : 'text-light-muted'
+                }`}>Developer & Writer</p>
               </div>
             </div>
 
             {/* Content */}
             <div 
-              className="prose prose-invert prose-lg max-w-none"
+              className={`prose prose-lg max-w-none ${
+                isDark ? 'prose-invert' : 'prose-light'
+              }`}
               style={{
-                color: '#e5e7eb',
+                color: isDark ? '#e5e7eb' : '#212529',
                 lineHeight: '1.8'
               }}
             >
@@ -137,7 +163,9 @@ const BlogPost = () => {
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-dark-border">
+              <div className={`flex flex-wrap gap-3 mt-12 pt-8 border-t ${
+                isDark ? 'border-dark-border' : 'border-light-border'
+              }`}>
                 {post.tags.map((tag, i) => (
                   <span
                     key={i}

@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class', // Enable class-based dark mode for theme switcher
   theme: {
     extend: {
       colors: {
@@ -13,7 +14,14 @@ export default {
         'dark-surface': '#111111',
         'dark-border': '#1a1a1a',
         
-        // Accent Colors
+        // Light theme colors (NEW for theme switcher)
+        'light-bg': '#ffffff',
+        'light-surface': '#f8f9fa',
+        'light-border': '#e9ecef',
+        'light-text': '#212529',
+        'light-muted': '#6c757d',
+        
+        // Accent Colors (Empire colors - work for both themes)
         'empire-purple': '#a855f7',
         'empire-cyan': '#06b6d4',
         'empire-green': '#10b981',

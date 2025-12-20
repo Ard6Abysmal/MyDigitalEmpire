@@ -2,64 +2,103 @@
 import { motion } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
 import { trackDownload, trackButtonClick } from '../services/analytics';
-import { useTheme } from '../context/ThemeContext'; // NEW
+import { useTheme } from '../context/ThemeContext';
 
 const About = () => {
-  const { isDark } = useTheme(); // NEW - Get theme state
+  const { isDark } = useTheme();
 
-  const skills = [
-    { name: 'Python', level: 'Expert', years: '3+ years', color: 'empire-purple', stars: 5 },
-    { name: 'JavaScript/React', level: 'Advanced', years: '2+ years', color: 'empire-cyan', stars: 4 },
-    { name: 'FastAPI/Django', level: 'Advanced', years: '2+ years', color: 'empire-green', stars: 4 },
-    { name: 'AI/ML (PyTorch)', level: 'Intermediate', years: '1+ year', color: 'empire-orange', stars: 3 },
-    { name: 'Blockchain/Web3', level: 'Intermediate', years: '1+ year', color: 'empire-pink', stars: 3 },
-    { name: 'Computer Vision', level: 'Advanced', years: '2+ years', color: 'empire-purple', stars: 4 },
-    { name: 'DevOps/Docker', level: 'Intermediate', years: '1+ year', color: 'empire-cyan', stars: 3 },
-    { name: 'SQL/NoSQL', level: 'Advanced', years: '2+ years', color: 'empire-green', stars: 4 },
-  ];
+  const skills = {
+    programming: [
+      { name: 'Python', badge: 'Expert', years: '3+', icon: '🐍', color: 'empire-purple' },
+      { name: 'C/C++', badge: 'Expert', years: '3+', icon: '⚡', color: 'empire-cyan' },
+      { name: 'JavaScript', badge: 'Proficient', years: '2+', icon: '💛', color: 'empire-green' },
+      { name: 'C#', badge: 'Intermediate', years: '1+', icon: '🔷', color: 'empire-orange' },
+      { name: 'Java', badge: 'Intermediate', years: '1+', icon: '☕', color: 'empire-pink' },
+      { name: 'MATLAB', badge: 'Proficient', years: '2+', icon: '📊', color: 'empire-purple' },
+    ],
+    webDev: [
+      { name: 'HTML/CSS', badge: 'Expert', years: '2+', icon: '🎨', color: 'empire-cyan' },
+      { name: 'React', badge: 'Advanced', years: '1+', icon: '⚛️', color: 'empire-green' },
+      { name: 'Node.js', badge: 'Intermediate', years: '1+', icon: '🟢', color: 'empire-orange' },
+      { name: 'FastAPI', badge: 'Advanced', years: '1+', icon: '⚡', color: 'empire-pink' },
+    ],
+    aiML: [
+      { name: 'PyTorch', badge: 'Advanced', years: '2+', icon: '🔥', color: 'empire-purple' },
+      { name: 'TensorFlow', badge: 'Intermediate', years: '1+', icon: '🧠', color: 'empire-cyan' },
+      { name: 'Computer Vision', badge: 'Advanced', years: '2+', icon: '👁️', color: 'empire-green' },
+      { name: 'Deep Learning', badge: 'Advanced', years: '2+', icon: '🤖', color: 'empire-orange' },
+    ],
+    embedded: [
+      { name: 'Arduino', badge: 'Advanced', years: '3+', icon: '🔌', color: 'empire-purple' },
+      { name: 'Embedded C', badge: 'Expert', years: '3+', icon: '💾', color: 'empire-cyan' },
+      { name: 'Sensors & IoT', badge: 'Advanced', years: '3+', icon: '📡', color: 'empire-green' },
+      { name: 'UART/I2C/SPI', badge: 'Advanced', years: '2+', icon: '🔗', color: 'empire-orange' },
+    ],
+  };
 
   const currentWork = [
     {
-      title: 'BlueDepth AI',
-      description: 'Underwater image enhancement using UNet deep learning',
+      title: 'BlueDepth-Crescent',
+      description: 'Underwater image enhancement using UNet deep learning for low-visibility environments',
       status: 'Active Development',
-      tech: ['PyTorch', 'Computer Vision', 'CUDA'],
+      tech: ['PyTorch', 'Computer Vision', 'CUDA', 'GPU Optimization'],
       icon: '🌊',
     },
     {
       title: 'Digital Empire Portfolio',
-      description: 'Full-stack portfolio with AI chatbot integration',
+      description: 'Full-stack portfolio ecosystem with AI chatbot, admin dashboard, and analytics',
       status: 'In Progress',
-      tech: ['React', 'FastAPI', 'Groq AI'],
+      tech: ['React', 'FastAPI', 'Groq AI', 'SQLite'],
       icon: '🚀',
     },
     {
-      title: 'Blockchain Gaming Tokens',
-      description: 'Web3 token system for gaming achievements',
+      title: 'M.Tech VLSI Research',
+      description: 'Neuromorphic circuits, graphene-based electronics, and edge computing systems',
       status: 'Research Phase',
-      tech: ['Solidity', 'Ethereum', 'Web3.js'],
-      icon: '🎮',
+      tech: ['VLSI Design', 'Neuromorphic', 'Graphene', 'Edge AI'],
+      icon: '⚡',
+    },
+  ];
+
+  const undergraduateProjects = [
+    {
+      title: 'Accident Identification & Alerting System',
+      year: '2023-24',
+      description: 'Designed an embedded system to detect vehicle accidents using accelerometer data with real-time GPS alerting via GSM.',
+      role: 'Team Lead & Algorithm Designer',
+      team: '3-member team',
+      tech: ['Arduino', 'MPU6050', 'GSM800L', 'Neo-6M GPS', 'Embedded C'],
+      outcome: 'Successfully implemented real-time accident detection with <2s response time',
+      icon: '🚗',
+    },
+    {
+      title: 'Water Quality Monitoring System',
+      year: '2023',
+      description: 'Developed a real-time system to monitor water safety by measuring pH, turbidity, temperature, and dissolved solids.',
+      role: 'System Designer & Developer',
+      team: 'Individual project',
+      tech: ['Arduino', 'pH Sensor', 'Turbidity Sensor', 'Temperature Sensor', 'IoT'],
+      outcome: 'Cost-effective solution for drinking water management and environmental monitoring',
+      icon: '💧',
     },
   ];
 
   const timeline = [
-    { year: '2024-Present', title: 'Computer Science Student', desc: 'Deep Learning & Full-Stack Development' },
-    { year: '2023', title: 'Started AI/ML Journey', desc: 'Began learning PyTorch and Computer Vision' },
-    { year: '2022', title: 'Web Development', desc: 'Mastered React, Node.js, and FastAPI' },
+    { year: '2025-27', title: 'M.Tech in VLSI', desc: 'Pursuing postgraduate studies in VLSI design, neuromorphic circuits, and edge electronics', icon: '🎓' },
+    { year: '2024', title: 'B.Tech ECE Completed', desc: 'Graduated with Electronics and Communication Engineering degree', icon: '⚡' },
+    { year: '2024-Present', title: 'Web Development Journey', desc: 'freeCodeCamp & Udemy (Angela Yu) - Full-stack web development', icon: '💻' },
+    { year: '2023-24', title: 'Final Year Projects', desc: 'Accident Detection System & Water Quality Monitoring - Team leadership', icon: '🚗' },
+    { year: '2023', title: 'Started AI/ML Journey', desc: 'Began deep learning with PyTorch and computer vision projects', icon: '🤖' },
+    { year: '2020-24', title: 'Undergraduate ECE', desc: 'Electronics & Communication Engineering - Fundamentals and hands-on projects', icon: '📚' },
   ];
 
-  // Color mapping for inline styles (Tailwind can't do dynamic class names)
-  const colorMap = {
-    'empire-purple': '#a855f7',
-    'empire-cyan': '#06b6d4',
-    'empire-green': '#10b981',
-    'empire-orange': '#f97316',
-    'empire-pink': '#ec4899',
-  };
+  const achievements = [
+    { title: 'Team Lead - Final Year Project', desc: 'Led 3-member team for Accident Detection System', icon: '👥' },
+    { title: 'Electronics Club Member', desc: 'Active participation in circuit design workshops', icon: '🔧' },
+    { title: 'Academic Projects', desc: 'Multiple embedded systems and IoT projects completed', icon: '🎓' },
+  ];
 
-  // Handle resume download with analytics tracking
   const handleDownloadResume = async () => {
-    // Track download event
     trackDownload('Resume.pdf');
     
     try {
@@ -74,7 +113,7 @@ const About = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'Resume.pdf';
+      link.download = 'Amal_Madhu_Resume.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -85,7 +124,6 @@ const About = () => {
     }
   };
 
-  // Track project card clicks
   const handleProjectClick = (projectTitle) => {
     trackButtonClick(`Current Work - ${projectTitle}`);
   };
@@ -94,6 +132,23 @@ const About = () => {
     <div className={`relative min-h-screen pt-24 pb-16 ${
       isDark ? 'bg-true-black' : 'bg-light-bg'
     }`}>
+      <style>{`
+        * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .gradient-text-stable {
+          display: inline-block;
+          background: linear-gradient(90deg, #a855f7 0%, #06b6d4 50%, #a855f7 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          padding: 0.1em 0;
+          line-height: 1.2;
+        }
+      `}</style>
+
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -103,77 +158,98 @@ const About = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
-            About Me
+          <h1 className="text-5xl md:text-6xl font-black mb-4">
+            <span className="gradient-text-stable">About Me</span>
           </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
+          <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
             isDark ? 'text-text-muted' : 'text-light-muted'
           }`}>
-            A passionate developer building ambitious projects across AI, Web3, and Full-Stack development.
-            Learning fast, building faster.
+            Electronics Engineer | M.Tech VLSI Student | Full-Stack Developer | AI/ML Enthusiast
           </p>
           
-          {/* Download Resume Button */}
           <motion.button
             onClick={handleDownloadResume}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.8)] transition-all inline-flex items-center gap-2"
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="relative mt-8 px-8 py-4 rounded-xl bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:shadow-[0_0_50px_rgba(168,85,247,0.9)] transition-all inline-flex items-center gap-3 overflow-hidden"
           >
-            <span>📄</span>
-            Download Resume
+            <span className="relative z-10 flex items-center gap-3">
+              <span className="text-2xl">📄</span>
+              Download Resume
+            </span>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              animate={{ x: ['-200%', '200%'] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            />
           </motion.button>
         </motion.div>
 
-        {/* Introduction Card */}
+        {/* Professional Summary */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className={`mb-16 p-8 rounded-2xl border shadow-[0_0_50px_rgba(168,85,247,0.1)] ${
+          className={`mb-16 p-8 rounded-2xl border-2 shadow-2xl ${
             isDark 
-              ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-dark-border' 
-              : 'bg-gradient-to-br from-light-surface to-light-bg border-light-border'
+              ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
+              : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
           }`}
         >
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h2 className="text-3xl font-bold text-empire-purple mb-4">Who I Am</h2>
-              <p className={`leading-relaxed mb-4 ${
-                isDark ? 'text-empire-text/80' : 'text-light-text/80'
+              <h2 className="text-3xl font-black text-empire-purple mb-4 flex items-center gap-3">
+                <span className="text-4xl">👨‍💻</span>
+                Who I Am
+              </h2>
+              <p className={`leading-relaxed mb-4 text-base ${
+                isDark ? 'text-empire-text/90' : 'text-light-text/90'
               }`}>
-                I'm a computer science student with a burning passion for creating technology that matters.
-                From deep learning models for underwater image enhancement to blockchain-powered gaming systems,
-                I love tackling complex challenges.
+                I'm <span className="font-bold text-empire-cyan">Amal Madhu</span>, an Electronics Engineer pursuing M.Tech in VLSI (2025-27) 
+                with a B.Tech in Electronics and Communication Engineering (2020-24).
               </p>
-              <p className={`leading-relaxed ${
-                isDark ? 'text-empire-text/80' : 'text-light-text/80'
+              <p className={`leading-relaxed mb-4 text-base ${
+                isDark ? 'text-empire-text/90' : 'text-light-text/90'
               }`}>
-                My journey started with curiosity about how things work and evolved into a mission to build
-                an entire "Digital Empire" of interconnected projects spanning AI, gaming, blockchain, and beyond.
+                Passionate about the intersection of hardware and software — from neuromorphic VLSI and graphene electronics 
+                to full-stack web development, AI/ML, blockchain, and IoT systems.
+              </p>
+              <p className={`leading-relaxed text-base ${
+                isDark ? 'text-empire-text/90' : 'text-light-text/90'
+              }`}>
+                My philosophy: <span className="font-bold text-empire-green">Discipline is everything</span>. 
+                I believe in learning by doing, adapting through struggle, and moving forward continuously. 
+                There's no peak — just continuous growth.
               </p>
             </div>
             
             <div>
-              <h2 className="text-3xl font-bold text-empire-cyan mb-4">What Drives Me</h2>
+              <h2 className="text-3xl font-black text-empire-cyan mb-4 flex items-center gap-3">
+                <span className="text-4xl">🎯</span>
+                Core Focus Areas
+              </h2>
               <ul className="space-y-3">
                 {[
-                  'Building production-ready AI/ML solutions',
-                  'Creating full-stack applications from scratch',
-                  'Exploring blockchain and Web3 technologies',
-                  'Learning new frameworks and tools constantly',
-                  'Sharing knowledge with the dev community',
+                  'Neuromorphic VLSI & Edge Electronics',
+                  'Embedded Systems & IoT Solutions',
+                  'AI/ML - Computer Vision & Deep Learning',
+                  'Full-Stack Web Development (React, FastAPI)',
+                  'Cloud Computing & Distributed Systems',
+                  'Blockchain, Quantum Computing & Cybersecurity',
+                  'Material Technology (Graphene, Advanced Electronics)',
                 ].map((item, idx) => (
                   <motion.li
                     key={idx}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + idx * 0.1 }}
-                    className={`flex items-center gap-3 ${
-                      isDark ? 'text-empire-text/80' : 'text-light-text/80'
+                    transition={{ delay: 0.3 + idx * 0.1, duration: 0.2, ease: "easeOut" }}
+                    whileHover={{ x: 5 }}
+                    className={`flex items-center gap-3 text-base ${
+                      isDark ? 'text-empire-text/90' : 'text-light-text/90'
                     }`}
                   >
-                    <span className="text-empire-green text-xl">✓</span>
+                    <span className="text-empire-green text-2xl">✓</span>
                     {item}
                   </motion.li>
                 ))}
@@ -182,112 +258,265 @@ const About = () => {
           </div>
         </motion.div>
 
-        {/* Skills Proficiency - UPDATED VERSION */}
+        {/* Education */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-16"
+        >
+          <h2 className="text-4xl font-black text-center mb-10">
+            <span className="gradient-text-stable">Education</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <motion.div
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className={`p-8 rounded-2xl border-2 shadow-xl ${
+                isDark 
+                  ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20' 
+                  : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15'
+              }`}
+            >
+              <div className="text-5xl mb-4">🎓</div>
+              <h3 className={`text-2xl font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                M.Tech in VLSI
+              </h3>
+              <p className="text-empire-purple font-bold text-lg mb-3">2025-27 (1st Year)</p>
+              <p className={`text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                Specializing in neuromorphic circuits, graphene-based electronics, and edge computing systems
+              </p>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className={`p-8 rounded-2xl border-2 shadow-xl ${
+                isDark 
+                  ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-cyan/30 hover:border-empire-cyan/60 hover:shadow-2xl hover:shadow-empire-cyan/20' 
+                  : 'bg-gradient-to-br from-white to-light-surface border-empire-cyan/25 hover:border-empire-cyan/50 hover:shadow-2xl hover:shadow-empire-cyan/15'
+              }`}
+            >
+              <div className="text-5xl mb-4">⚡</div>
+              <h3 className={`text-2xl font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                B.Tech in ECE
+              </h3>
+              <p className="text-empire-cyan font-bold text-lg mb-3">2020-24 (Completed)</p>
+              <p className={`text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                Electronics & Communication Engineering - Embedded systems, IoT, and circuit design
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Undergraduate Projects - EXACT EDUCATION PATTERN */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="mb-16"
         >
-          <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-empire-purple to-empire-cyan bg-clip-text text-transparent">
-            Skills & Proficiency
+          <h2 className="text-4xl font-black text-center mb-10">
+            <span className="gradient-text-stable">Undergraduate Projects</span>
           </h2>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            {skills.map((skill, idx) => (
+          <div className="space-y-8">
+            {undergraduateProjects.map((project, idx) => (
               <motion.div
-                key={skill.name}
+                key={idx}
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + idx * 0.1 }}
-                className={`p-6 rounded-xl border hover:border-empire-purple/50 transition-all ${
-                  isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+                transition={{ delay: 0.5 + idx * 0.2 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className={`p-8 rounded-2xl border-2 shadow-xl ${
+                  isDark 
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className={`font-semibold text-lg ${
-                    isDark ? 'text-empire-text' : 'text-light-text'
-                  }`}>{skill.name}</span>
-                  <span 
-                    className="font-bold text-sm px-3 py-1 rounded-full border"
-                    style={{
-                      color: colorMap[skill.color],
-                      backgroundColor: `${colorMap[skill.color]}10`,
-                      borderColor: `${colorMap[skill.color]}30`,
-                    }}
+                <div className="flex items-start gap-6">
+                  <motion.div 
+                    className="text-6xl"
+                    whileHover={{ scale: 1.15, rotate: 10 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                   >
-                    {skill.level}
-                  </span>
+                    {project.icon}
+                  </motion.div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
+                      <h3 className={`text-2xl font-black ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                        {project.title}
+                      </h3>
+                      <span className="px-4 py-2 rounded-xl bg-empire-purple/20 border-2 border-empire-purple/40 text-empire-purple font-bold">
+                        {project.year}
+                      </span>
+                    </div>
+                    
+                    <p className={`mb-4 text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                      {project.description}
+                    </p>
+
+                    <div className="grid md:grid-cols-3 gap-4 mb-5">
+                      <div className={`p-3 rounded-lg border-2 ${
+                        isDark ? 'bg-dark-bg/50 border-empire-cyan/30' : 'bg-light-bg/50 border-empire-cyan/25'
+                      }`}>
+                        <p className="text-xs text-empire-cyan font-bold mb-1">Role</p>
+                        <p className={`text-sm font-semibold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>{project.role}</p>
+                      </div>
+                      <div className={`p-3 rounded-lg border-2 ${
+                        isDark ? 'bg-dark-bg/50 border-empire-green/30' : 'bg-light-bg/50 border-empire-green/25'
+                      }`}>
+                        <p className="text-xs text-empire-green font-bold mb-1">Team</p>
+                        <p className={`text-sm font-semibold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>{project.team}</p>
+                      </div>
+                      <div className={`p-3 rounded-lg border-2 ${
+                        isDark ? 'bg-dark-bg/50 border-empire-orange/30' : 'bg-light-bg/50 border-empire-orange/25'
+                      }`}>
+                        <p className="text-xs text-empire-orange font-bold mb-1">Outcome</p>
+                        <p className={`text-sm font-semibold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>{project.outcome}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.map((tech, i) => (
+                        <motion.span 
+                          key={i}
+                          whileHover={{ scale: 1.1, y: -2 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="text-xs px-3 py-2 rounded-lg bg-empire-purple/20 text-empire-purple border-2 border-empire-purple/40 font-bold shadow-sm"
+                        >
+                          {tech}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                
-                {/* Star Rating */}
-                <div className="flex items-center gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <motion.span
-                      key={i}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.6 + idx * 0.1 + i * 0.05 }}
-                      className={`text-2xl ${i < skill.stars ? 'text-yellow-400' : (isDark ? 'text-gray-700' : 'text-gray-300')}`}
-                    >
-                      ★
-                    </motion.span>
-                  ))}
-                </div>
-                
-                <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-light-muted'}`}>
-                  {skill.years} experience
-                </p>
               </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* Currently Working On */}
+        {/* Skills - EXACT EDUCATION PATTERN */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-empire-cyan to-empire-green bg-clip-text text-transparent">
-            Currently Working On
+          <h2 className="text-4xl font-black text-center mb-12">
+            <span className="gradient-text-stable">Technical Skills</span>
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="mb-12">
+            <h3 className="text-2xl font-black text-empire-purple mb-6 flex items-center gap-3">
+              <span className="text-3xl">🐍</span>
+              Programming Languages
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {skills.programming.map((skill, idx) => (
+                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={0.7 + idx * 0.05} />
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-12">
+            <h3 className="text-2xl font-black text-empire-cyan mb-6 flex items-center gap-3">
+              <span className="text-3xl">🌐</span>
+              Web Development
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {skills.webDev.map((skill, idx) => (
+                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={0.8 + idx * 0.05} />
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-12">
+            <h3 className="text-2xl font-black text-empire-green mb-6 flex items-center gap-3">
+              <span className="text-3xl">🤖</span>
+              AI/ML & Data Science
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {skills.aiML.map((skill, idx) => (
+                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={0.9 + idx * 0.05} />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-black text-empire-orange mb-6 flex items-center gap-3">
+              <span className="text-3xl">⚡</span>
+              Embedded Systems & Electronics
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {skills.embedded.map((skill, idx) => (
+                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={1.0 + idx * 0.05} />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Currently Working On - EXACT EDUCATION PATTERN */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+          className="mb-16"
+        >
+          <h2 className="text-4xl font-black text-center mb-12">
+            <span className="gradient-text-stable">Currently Working On</span>
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
             {currentWork.map((project, idx) => (
               <motion.div
                 key={project.title}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.7 + idx * 0.1 }}
-                whileHover={{ y: -10 }}
+                transition={{ delay: 1.2 + idx * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
                 onClick={() => handleProjectClick(project.title)}
-                className={`p-6 rounded-2xl border hover:border-empire-cyan/50 transition-all shadow-lg cursor-pointer ${
+                className={`p-8 rounded-2xl border-2 shadow-xl cursor-pointer ${
                   isDark 
-                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-dark-border' 
-                    : 'bg-gradient-to-br from-light-surface to-light-bg border-light-border'
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-cyan/30 hover:border-empire-cyan/60 hover:shadow-2xl hover:shadow-empire-cyan/20' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-cyan/25 hover:border-empire-cyan/50 hover:shadow-2xl hover:shadow-empire-cyan/15'
                 }`}
               >
-                <div className="text-5xl mb-4 animate-float">{project.icon}</div>
-                <h3 className={`text-xl font-bold mb-2 ${
+                <motion.div 
+                  className="text-6xl mb-5"
+                  whileHover={{ scale: 1.15, rotate: 10 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  {project.icon}
+                </motion.div>
+                <h3 className={`text-xl font-black mb-3 ${
                   isDark ? 'text-empire-text' : 'text-light-text'
                 }`}>{project.title}</h3>
-                <p className={`text-sm mb-4 ${
-                  isDark ? 'text-text-muted' : 'text-light-muted'
+                <p className={`text-sm mb-5 leading-relaxed ${
+                  isDark ? 'text-text-muted' : 'text-gray-600'
                 }`}>{project.description}</p>
                 
-                <div className="mb-4">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-empire-green/20 text-empire-green border border-empire-green/30">
+                <div className="mb-5">
+                  <span className={`inline-block px-4 py-2 rounded-xl text-xs font-black border-2 ${
+                    project.status === 'Active Development' ? 'bg-empire-green/25 text-empire-green border-empire-green/50' :
+                    project.status === 'In Progress' ? 'bg-empire-cyan/25 text-empire-cyan border-empire-cyan/50' :
+                    'bg-empire-orange/25 text-empire-orange border-empire-orange/50'
+                  }`}>
                     {project.status}
                   </span>
                 </div>
                 
                 <div className="flex flex-wrap gap-2">
                   {project.tech.map((tech, i) => (
-                    <span key={i} className="text-xs px-2 py-1 rounded bg-empire-purple/10 text-empire-purple border border-empire-purple/30">
+                    <motion.span 
+                      key={i}
+                      whileHover={{ scale: 1.1, y: -2 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="text-xs px-3 py-1.5 rounded-lg bg-empire-purple/20 text-empire-purple border-2 border-empire-purple/40 font-bold"
+                    >
                       {tech}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
               </motion.div>
@@ -295,52 +524,190 @@ const About = () => {
           </div>
         </motion.div>
 
-        {/* Timeline */}
+        {/* Achievements - EXACT EDUCATION PATTERN */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 1.3 }}
+          className="mb-16"
         >
-          <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-empire-pink to-empire-orange bg-clip-text text-transparent">
-            Journey Timeline
+          <h2 className="text-4xl font-black text-center mb-10">
+            <span className="gradient-text-stable">Achievements & Leadership</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {achievements.map((achievement, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.4 + idx * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className={`p-8 rounded-2xl border-2 text-center shadow-xl ${
+                  isDark 
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-pink/30 hover:border-empire-pink/60 hover:shadow-2xl hover:shadow-empire-pink/20' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-pink/25 hover:border-empire-pink/50 hover:shadow-2xl hover:shadow-empire-pink/15'
+                }`}
+              >
+                <motion.div 
+                  className="text-5xl mb-4"
+                  whileHover={{ scale: 1.15, rotate: 15 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  {achievement.icon}
+                </motion.div>
+                <h3 className={`text-lg font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                  {achievement.title}
+                </h3>
+                <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                  {achievement.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Journey Timeline */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5 }}
+        >
+          <h2 className="text-4xl font-black text-center mb-12">
+            <span className="gradient-text-stable">Journey Timeline</span>
           </h2>
           
-          <div className="relative max-w-3xl mx-auto">
-            {/* Timeline line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-empire-purple via-empire-cyan to-empire-green"></div>
+          <div className="relative max-w-5xl mx-auto">
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-empire-purple via-empire-cyan to-empire-green rounded-full"></div>
             
             {timeline.map((item, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.9 + idx * 0.2 }}
-                className={`relative flex items-center mb-12 ${idx % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
+                transition={{ delay: 1.6 + idx * 0.15 }}
+                className={`relative flex items-center mb-16 ${idx % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
               >
-                <div className={`w-1/2 ${idx % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                  <div className={`p-4 rounded-xl border hover:border-empire-purple/50 transition-all ${
-                    isDark ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
-                  }`}>
-                    <span className="text-empire-purple font-bold">{item.year}</span>
-                    <h3 className={`text-xl font-bold mt-2 ${
+                <div className={`w-1/2 ${idx % 2 === 0 ? 'pr-12 text-right' : 'pl-12 text-left'}`}>
+                  <motion.div 
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className={`p-6 rounded-2xl border-2 shadow-lg ${
+                      isDark 
+                        ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-xl hover:shadow-empire-purple/20' 
+                        : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-xl hover:shadow-empire-purple/15'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 justify-end mb-2">
+                      <span className="text-3xl">{item.icon}</span>
+                      <span className="text-empire-purple font-black text-lg">{item.year}</span>
+                    </div>
+                    <h3 className={`text-xl font-black mb-2 ${
                       isDark ? 'text-empire-text' : 'text-light-text'
                     }`}>{item.title}</h3>
-                    <p className={`text-sm mt-1 ${
-                      isDark ? 'text-text-muted' : 'text-light-muted'
+                    <p className={`text-sm leading-relaxed ${
+                      isDark ? 'text-text-muted' : 'text-gray-600'
                     }`}>{item.desc}</p>
-                  </div>
+                  </motion.div>
                 </div>
                 
-                {/* Center dot */}
-                <div className={`absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-empire-purple border-4 shadow-[0_0_20px_rgba(168,85,247,0.8)] ${
-                  isDark ? 'border-true-black' : 'border-white'
-                }`}></div>
+                <motion.div 
+                  whileHover={{ scale: 1.4 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className={`absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-empire-purple border-4 shadow-[0_0_20px_rgba(168,85,247,0.8)] z-10 ${
+                    isDark ? 'border-true-black' : 'border-white'
+                  }`}
+                />
               </motion.div>
             ))}
           </div>
         </motion.div>
+
+        {/* Personal Philosophy */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.0 }}
+          className={`mt-16 p-10 rounded-2xl border-2 text-center shadow-2xl ${
+            isDark 
+              ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
+              : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
+          }`}
+        >
+          <motion.div 
+            className="text-6xl mb-5"
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            💪
+          </motion.div>
+          <h2 className="text-3xl font-black text-empire-purple mb-5">My Philosophy</h2>
+          <p className={`text-lg leading-relaxed max-w-3xl mx-auto ${
+            isDark ? 'text-empire-text/90' : 'text-light-text/90'
+          }`}>
+            <span className="font-bold text-empire-cyan">Discipline</span> is the foundation of everything I do. 
+            I approach life with a <span className="font-bold text-empire-green">cold, calculated mindset</span> and 
+            officer-like qualities, constantly improving each day. I believe in{' '}
+            <span className="font-bold text-empire-purple">learning by doing</span> — struggle is part of growth. 
+            Survival instinct drives me forward. There's no peak or limit, just an endless journey of progress.
+          </p>
+        </motion.div>
       </div>
     </div>
+  );
+};
+
+// SKILL CARD - EXACT EDUCATION PATTERN
+const SkillCardNew = ({ skill, isDark, delay }) => {
+  const colorMap = {
+    'empire-purple': { bg: 'bg-empire-purple/20', text: 'text-empire-purple', border: 'border-empire-purple/50' },
+    'empire-cyan': { bg: 'bg-empire-cyan/20', text: 'text-empire-cyan', border: 'border-empire-cyan/50' },
+    'empire-green': { bg: 'bg-empire-green/20', text: 'text-empire-green', border: 'border-empire-green/50' },
+    'empire-orange': { bg: 'bg-empire-orange/20', text: 'text-empire-orange', border: 'border-empire-orange/50' },
+    'empire-pink': { bg: 'bg-empire-pink/20', text: 'text-empire-pink', border: 'border-empire-pink/50' },
+  };
+
+  const colors = colorMap[skill.color];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className={`p-6 rounded-xl border-2 shadow-lg ${
+        isDark 
+          ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-xl hover:shadow-empire-purple/20' 
+          : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-xl hover:shadow-empire-purple/15'
+      }`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <motion.span 
+            className="text-3xl"
+            whileHover={{ scale: 1.15, rotate: 15 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            {skill.icon}
+          </motion.span>
+          <span className={`font-black text-lg ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+            {skill.name}
+          </span>
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-3 mb-3">
+        <span className={`flex-1 px-4 py-2 rounded-lg border-2 ${colors.bg} ${colors.text} ${colors.border} font-bold text-sm text-center`}>
+          {skill.badge}
+        </span>
+        <span className={`px-4 py-2 rounded-lg border-2 font-bold text-sm ${
+          isDark ? 'bg-dark-bg/50 border-empire-purple/30 text-empire-text' : 'bg-light-bg/50 border-empire-purple/25 text-light-text'
+        }`}>
+          {skill.years} yrs
+        </span>
+      </div>
+    </motion.div>
   );
 };
 

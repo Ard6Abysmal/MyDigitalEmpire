@@ -6,7 +6,8 @@ import uvicorn
 from .database import get_db, engine, Base
 from .models.project import Project
 from .routers import chatbot
-from .routes import admin, blog, resume  # Add blog
+from .routes import admin, blog, resume
+from .routes import projects  # NEW - Add this import
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -29,9 +30,9 @@ app.add_middleware(
 # Include routers
 app.include_router(chatbot.router)  # Chatbot routes
 app.include_router(admin.router)    # Admin routes
-app.include_router(blog.router)     # Add this
-app.include_router(resume.router)  # Add this
-
+app.include_router(blog.router)     # Blog routes
+app.include_router(resume.router)   # Resume routes
+app.include_router(projects.router) # NEW - Public projects routes (including detail endpoint)
 
 @app.get("/")
 async def root():
@@ -41,31 +42,12 @@ async def root():
         "version": "2.0.0"
     }
 
-@app.get("/api/projects")
-async def get_projects(db: Session = Depends(get_db)):
-    """Fetch all published projects from database"""
-    projects = db.query(Project).all()
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
 
-    # Convert SQLAlchemy models to dict
-    projects_data = [
-        {
-            "id": p.id,
-            "title": p.name,  # Using 'name' from your existing model
-            "name": p.name,
-            "category": p.category,
-            "status": p.status,
-            "description": p.description,
-            "tech": p.tech,
-            "tags": p.tech,  # Map tech to tags for compatibility
-            "image_url": p.image_url,
-            "github_url": p.github_url,
-            "live_url": p.live_url,
-            "demo_url": p.live_url,  # Map live_url to demo_url for compatibility
-        }
-        for p in projects
-    ]
-
-    return {"projects": projects_data}
+# REMOVED: The old /api/projects endpoint is now handled by routes/projects.py
+# This avoids duplication and keeps all project routes in one place
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

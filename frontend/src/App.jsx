@@ -4,14 +4,15 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navigation/Navbar';
 import ChatWidget from './components/Chatbot/ChatWidget';
-import ParticleBackground from './components/ParticleBackground'; // NEW
+import ParticleBackground from './components/ParticleBackground';
 import { initGA, trackPageView } from './services/analytics';
-import { useTheme } from './context/ThemeContext'; // NEW
+import { useTheme } from './context/ThemeContext';
 
 // Import pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Projects from './pages/Projects';
+import ProjectDetail from './pages/ProjectDetail'; // NEW - Project detail page
 import Skills from './pages/Skills';
 import Contact from './pages/Contact';
 import Blog from './pages/Blog';
@@ -33,7 +34,7 @@ function AnalyticsTracker() {
 }
 
 function App() {
-  const { isDark } = useTheme(); // NEW - Get theme state
+  const { isDark } = useTheme(); // Get theme state
 
   // const [projects, setProjects] = useState([]);
   // const [loading, setLoading] = useState(true);
@@ -91,6 +92,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} /> {/* NEW - Project detail page */}
           <Route path="/skills" element={<Skills />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />

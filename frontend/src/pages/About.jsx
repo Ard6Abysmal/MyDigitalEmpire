@@ -21,6 +21,7 @@ const About = () => {
       { name: 'React', badge: 'Advanced', years: '1+', icon: '⚛️', color: 'empire-green' },
       { name: 'Node.js', badge: 'Intermediate', years: '1+', icon: '🟢', color: 'empire-orange' },
       { name: 'FastAPI', badge: 'Advanced', years: '1+', icon: '⚡', color: 'empire-pink' },
+      { name: 'Firebase', badge: 'Learning', years: '1+', icon: '🔥', color: 'empire-purple' },
     ],
     aiML: [
       { name: 'PyTorch', badge: 'Advanced', years: '2+', icon: '🔥', color: 'empire-purple' },
@@ -28,11 +29,19 @@ const About = () => {
       { name: 'Computer Vision', badge: 'Advanced', years: '2+', icon: '👁️', color: 'empire-green' },
       { name: 'Deep Learning', badge: 'Advanced', years: '2+', icon: '🤖', color: 'empire-orange' },
     ],
+    vlsiHardware: [
+      { name: 'Verilog', badge: 'Learning', years: '1+', icon: '⚙️', color: 'empire-purple' },
+      { name: 'SystemVerilog', badge: 'Learning', years: '1+', icon: '🔬', color: 'empire-cyan' },
+      { name: 'Vivado Xilinx', badge: 'Learning', years: '1+', icon: '💎', color: 'empire-green' },
+      { name: 'Cadence', badge: 'Learning', years: '1+', icon: '🛠️', color: 'empire-orange' },
+      { name: 'Synopsys', badge: 'Learning', years: '1+', icon: '🔧', color: 'empire-pink' },
+    ],
     embedded: [
       { name: 'Arduino', badge: 'Advanced', years: '3+', icon: '🔌', color: 'empire-purple' },
       { name: 'Embedded C', badge: 'Expert', years: '3+', icon: '💾', color: 'empire-cyan' },
       { name: 'Sensors & IoT', badge: 'Advanced', years: '3+', icon: '📡', color: 'empire-green' },
       { name: 'UART/I2C/SPI', badge: 'Advanced', years: '2+', icon: '🔗', color: 'empire-orange' },
+      { name: 'RTOS', badge: 'Learning', years: '1+', icon: '⏱️', color: 'empire-pink' },
     ],
   };
 
@@ -74,10 +83,10 @@ const About = () => {
     {
       title: 'Water Quality Monitoring System',
       year: '2023',
-      description: 'Developed a real-time system to monitor water safety by measuring pH, turbidity, temperature, and dissolved solids.',
+      description: 'Developed a real-time system to monitor water safety by measuring pH, turbidity, temperature, and dissolved solids with RTOS integration.',
       role: 'System Designer & Developer',
-      team: 'Individual project',
-      tech: ['Arduino', 'pH Sensor', 'Turbidity Sensor', 'Temperature Sensor', 'IoT'],
+      team: '3-member team',
+      tech: ['Arduino', 'pH Sensor', 'Turbidity Sensor', 'Temperature Sensor', 'IoT', 'RTOS'],
       outcome: 'Cost-effective solution for drinking water management and environmental monitoring',
       icon: '💧',
     },
@@ -138,6 +147,7 @@ const About = () => {
           -moz-osx-font-smoothing: grayscale;
         }
         
+        /* GRADIENT TEXT - STABLE */
         .gradient-text-stable {
           display: inline-block;
           background: linear-gradient(90deg, #a855f7 0%, #06b6d4 50%, #a855f7 100%);
@@ -146,6 +156,87 @@ const About = () => {
           background-clip: text;
           padding: 0.1em 0;
           line-height: 1.2;
+        }
+
+        /* CONTINUOUS SHIMMER FOR BLOCKS */
+        .block-shimmer-dark {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.08),
+            transparent
+          );
+          animation: blockShimmer 8s linear infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .block-shimmer-light {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(168, 85, 247, 0.2),
+            transparent
+          );
+          animation: blockShimmer 8s linear infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        @keyframes blockShimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        /* GLASS OVERLAY FOR HOVER - INSTANT & SMOOTH */
+        .glass-overlay-dark {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.12) 0%,
+            rgba(6, 182, 212, 0.08) 50%,
+            transparent 100%
+          );
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .glass-overlay-light {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.08) 0%,
+            rgba(6, 182, 212, 0.06) 50%,
+            transparent 100%
+          );
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .about-block:hover .glass-overlay-dark,
+        .about-block:hover .glass-overlay-light {
+          opacity: 1;
+        }
+
+        /* VIVID DASH ICON */
+        .dash-icon {
+          display: inline-block;
+          width: 20px;
+          height: 3px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+          box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+          flex-shrink: 0;
         }
       `}</style>
 
@@ -191,13 +282,16 @@ const About = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className={`mb-16 p-8 rounded-2xl border-2 shadow-2xl ${
+          className={`about-block relative mb-16 p-8 rounded-2xl border-2 shadow-2xl overflow-hidden ${
             isDark 
               ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
               : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
           }`}
         >
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+          <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+          
+          <div className="relative z-10 grid md:grid-cols-2 gap-8">
             <div>
               <h2 className="text-3xl font-black text-empire-purple mb-4 flex items-center gap-3">
                 <span className="text-4xl">👨‍💻</span>
@@ -220,7 +314,7 @@ const About = () => {
               }`}>
                 My philosophy: <span className="font-bold text-empire-green">Discipline is everything</span>. 
                 I believe in learning by doing, adapting through struggle, and moving forward continuously. 
-                There's no peak — just continuous growth.
+                <span className="font-bold text-empire-cyan"> No peak or limit — just continuous growth and adaptation.</span>
               </p>
             </div>
             
@@ -249,7 +343,11 @@ const About = () => {
                       isDark ? 'text-empire-text/90' : 'text-light-text/90'
                     }`}
                   >
-                    <span className="text-empire-green text-2xl">✓</span>
+                    <motion.span 
+                      className="dash-icon"
+                      whileHover={{ scaleX: 1.3 }}
+                      transition={{ duration: 0.2 }}
+                    />
                     {item}
                   </motion.li>
                 ))}
@@ -272,44 +370,54 @@ const About = () => {
             <motion.div
               whileHover={{ y: -8, scale: 1.02 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className={`p-8 rounded-2xl border-2 shadow-xl ${
+              className={`about-block relative p-8 rounded-2xl border-2 shadow-xl overflow-hidden ${
                 isDark 
                   ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20' 
                   : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15'
               }`}
             >
-              <div className="text-5xl mb-4">🎓</div>
-              <h3 className={`text-2xl font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
-                M.Tech in VLSI
-              </h3>
-              <p className="text-empire-purple font-bold text-lg mb-3">2025-27 (1st Year)</p>
-              <p className={`text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
-                Specializing in neuromorphic circuits, graphene-based electronics, and edge computing systems
-              </p>
+              <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+              <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+              
+              <div className="relative z-10">
+                <div className="text-5xl mb-4">🎓</div>
+                <h3 className={`text-2xl font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                  M.Tech in VLSI
+                </h3>
+                <p className="text-empire-purple font-bold text-lg mb-3">2025-27 (1st Year)</p>
+                <p className={`text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                  Specializing in neuromorphic circuits, graphene-based electronics, and edge computing systems
+                </p>
+              </div>
             </motion.div>
 
             <motion.div
               whileHover={{ y: -8, scale: 1.02 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className={`p-8 rounded-2xl border-2 shadow-xl ${
+              className={`about-block relative p-8 rounded-2xl border-2 shadow-xl overflow-hidden ${
                 isDark 
                   ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-cyan/30 hover:border-empire-cyan/60 hover:shadow-2xl hover:shadow-empire-cyan/20' 
                   : 'bg-gradient-to-br from-white to-light-surface border-empire-cyan/25 hover:border-empire-cyan/50 hover:shadow-2xl hover:shadow-empire-cyan/15'
               }`}
             >
-              <div className="text-5xl mb-4">⚡</div>
-              <h3 className={`text-2xl font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
-                B.Tech in ECE
-              </h3>
-              <p className="text-empire-cyan font-bold text-lg mb-3">2020-24 (Completed)</p>
-              <p className={`text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
-                Electronics & Communication Engineering - Embedded systems, IoT, and circuit design
-              </p>
+              <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+              <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+              
+              <div className="relative z-10">
+                <div className="text-5xl mb-4">⚡</div>
+                <h3 className={`text-2xl font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                  B.Tech in ECE
+                </h3>
+                <p className="text-empire-cyan font-bold text-lg mb-3">2020-24 (Completed)</p>
+                <p className={`text-base leading-relaxed ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                  Electronics & Communication Engineering - Embedded systems, IoT, and circuit design
+                </p>
+              </div>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* Undergraduate Projects - EXACT EDUCATION PATTERN */}
+        {/* Undergraduate Projects - ✅ REMOVED whileHover */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -321,20 +429,18 @@ const About = () => {
           </h2>
           <div className="space-y-8">
             {undergraduateProjects.map((project, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + idx * 0.2 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className={`p-8 rounded-2xl border-2 shadow-xl ${
+                className={`about-block relative p-8 rounded-2xl border-2 shadow-xl overflow-hidden transition-all duration-200 ${
                   isDark 
-                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20' 
-                    : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15'
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20 hover:-translate-y-2 hover:scale-[1.02]' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15 hover:-translate-y-2 hover:scale-[1.02]'
                 }`}
               >
-                <div className="flex items-start gap-6">
+                <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+                <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+                
+                <div className="relative z-10 flex items-start gap-6">
                   <motion.div 
                     className="text-6xl"
                     whileHover={{ scale: 1.15, rotate: 10 }}
@@ -391,12 +497,12 @@ const About = () => {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Skills - EXACT EDUCATION PATTERN */}
+        {/* Skills - ✅ REMOVED whileHover from skill cards */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -424,7 +530,7 @@ const About = () => {
               <span className="text-3xl">🌐</span>
               Web Development
             </h3>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               {skills.webDev.map((skill, idx) => (
                 <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={0.8 + idx * 0.05} />
               ))}
@@ -443,24 +549,36 @@ const About = () => {
             </div>
           </div>
 
+          <div className="mb-12">
+            <h3 className="text-2xl font-black text-empire-pink mb-6 flex items-center gap-3">
+              <span className="text-3xl">💎</span>
+              VLSI & Hardware Design
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {skills.vlsiHardware.map((skill, idx) => (
+                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={1.0 + idx * 0.05} />
+              ))}
+            </div>
+          </div>
+
           <div>
             <h3 className="text-2xl font-black text-empire-orange mb-6 flex items-center gap-3">
               <span className="text-3xl">⚡</span>
               Embedded Systems & Electronics
             </h3>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               {skills.embedded.map((skill, idx) => (
-                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={1.0 + idx * 0.05} />
+                <SkillCardNew key={idx} skill={skill} isDark={isDark} delay={1.1 + idx * 0.05} />
               ))}
             </div>
           </div>
         </motion.div>
 
-        {/* Currently Working On - EXACT EDUCATION PATTERN */}
+        {/* Currently Working On - ✅ REMOVED whileHover */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1 }}
+          transition={{ delay: 1.2 }}
           className="mb-16"
         >
           <h2 className="text-4xl font-black text-center mb-12">
@@ -469,66 +587,66 @@ const About = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             {currentWork.map((project, idx) => (
-              <motion.div
+              <div
                 key={project.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.2 + idx * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
                 onClick={() => handleProjectClick(project.title)}
-                className={`p-8 rounded-2xl border-2 shadow-xl cursor-pointer ${
+                className={`about-block relative p-8 rounded-2xl border-2 shadow-xl cursor-pointer overflow-hidden transition-all duration-200 ${
                   isDark 
-                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-cyan/30 hover:border-empire-cyan/60 hover:shadow-2xl hover:shadow-empire-cyan/20' 
-                    : 'bg-gradient-to-br from-white to-light-surface border-empire-cyan/25 hover:border-empire-cyan/50 hover:shadow-2xl hover:shadow-empire-cyan/15'
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-cyan/30 hover:border-empire-cyan/60 hover:shadow-2xl hover:shadow-empire-cyan/20 hover:-translate-y-2 hover:scale-[1.02]' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-cyan/25 hover:border-empire-cyan/50 hover:shadow-2xl hover:shadow-empire-cyan/15 hover:-translate-y-2 hover:scale-[1.02]'
                 }`}
               >
-                <motion.div 
-                  className="text-6xl mb-5"
-                  whileHover={{ scale: 1.15, rotate: 10 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  {project.icon}
-                </motion.div>
-                <h3 className={`text-xl font-black mb-3 ${
-                  isDark ? 'text-empire-text' : 'text-light-text'
-                }`}>{project.title}</h3>
-                <p className={`text-sm mb-5 leading-relaxed ${
-                  isDark ? 'text-text-muted' : 'text-gray-600'
-                }`}>{project.description}</p>
+                <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+                <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
                 
-                <div className="mb-5">
-                  <span className={`inline-block px-4 py-2 rounded-xl text-xs font-black border-2 ${
-                    project.status === 'Active Development' ? 'bg-empire-green/25 text-empire-green border-empire-green/50' :
-                    project.status === 'In Progress' ? 'bg-empire-cyan/25 text-empire-cyan border-empire-cyan/50' :
-                    'bg-empire-orange/25 text-empire-orange border-empire-orange/50'
-                  }`}>
-                    {project.status}
-                  </span>
+                <div className="relative z-10">
+                  <motion.div 
+                    className="text-6xl mb-5"
+                    whileHover={{ scale: 1.15, rotate: 10 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                  >
+                    {project.icon}
+                  </motion.div>
+                  <h3 className={`text-xl font-black mb-3 ${
+                    isDark ? 'text-empire-text' : 'text-light-text'
+                  }`}>{project.title}</h3>
+                  <p className={`text-sm mb-5 leading-relaxed ${
+                    isDark ? 'text-text-muted' : 'text-gray-600'
+                  }`}>{project.description}</p>
+                  
+                  <div className="mb-5">
+                    <span className={`inline-block px-4 py-2 rounded-xl text-xs font-black border-2 ${
+                      project.status === 'Active Development' ? 'bg-empire-green/25 text-empire-green border-empire-green/50' :
+                      project.status === 'In Progress' ? 'bg-empire-cyan/25 text-empire-cyan border-empire-cyan/50' :
+                      'bg-empire-orange/25 text-empire-orange border-empire-orange/50'
+                    }`}>
+                      {project.status}
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {project.tech.map((tech, i) => (
+                      <motion.span 
+                        key={i}
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-empire-purple/20 text-empire-purple border-2 border-empire-purple/40 font-bold"
+                      >
+                        {tech}
+                      </motion.span>
+                    ))}
+                  </div>
                 </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  {project.tech.map((tech, i) => (
-                    <motion.span 
-                      key={i}
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-empire-purple/20 text-empire-purple border-2 border-empire-purple/40 font-bold"
-                    >
-                      {tech}
-                    </motion.span>
-                  ))}
-                </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Achievements - EXACT EDUCATION PATTERN */}
+        {/* Achievements - ✅ REMOVED whileHover */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.3 }}
+          transition={{ delay: 1.4 }}
           className="mb-16"
         >
           <h2 className="text-4xl font-black text-center mb-10">
@@ -536,33 +654,33 @@ const About = () => {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {achievements.map((achievement, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.4 + idx * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className={`p-8 rounded-2xl border-2 text-center shadow-xl ${
+                className={`about-block relative p-8 rounded-2xl border-2 text-center shadow-xl overflow-hidden transition-all duration-200 ${
                   isDark 
-                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-pink/30 hover:border-empire-pink/60 hover:shadow-2xl hover:shadow-empire-pink/20' 
-                    : 'bg-gradient-to-br from-white to-light-surface border-empire-pink/25 hover:border-empire-pink/50 hover:shadow-2xl hover:shadow-empire-pink/15'
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-pink/30 hover:border-empire-pink/60 hover:shadow-2xl hover:shadow-empire-pink/20 hover:-translate-y-2 hover:scale-[1.02]' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-pink/25 hover:border-empire-pink/50 hover:shadow-2xl hover:shadow-empire-pink/15 hover:-translate-y-2 hover:scale-[1.02]'
                 }`}
               >
-                <motion.div 
-                  className="text-5xl mb-4"
-                  whileHover={{ scale: 1.15, rotate: 15 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  {achievement.icon}
-                </motion.div>
-                <h3 className={`text-lg font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
-                  {achievement.title}
-                </h3>
-                <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
-                  {achievement.desc}
-                </p>
-              </motion.div>
+                <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+                <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+                
+                <div className="relative z-10">
+                  <motion.div 
+                    className="text-5xl mb-4"
+                    whileHover={{ scale: 1.15, rotate: 15 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                  >
+                    {achievement.icon}
+                  </motion.div>
+                  <h3 className={`text-lg font-black mb-3 ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                    {achievement.title}
+                  </h3>
+                  <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                    {achievement.desc}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </motion.div>
@@ -571,7 +689,7 @@ const About = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.5 }}
+          transition={{ delay: 1.6 }}
         >
           <h2 className="text-4xl font-black text-center mb-12">
             <span className="gradient-text-stable">Journey Timeline</span>
@@ -585,29 +703,34 @@ const About = () => {
                 key={idx}
                 initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.6 + idx * 0.15 }}
+                transition={{ delay: 1.7 + idx * 0.15 }}
                 className={`relative flex items-center mb-16 ${idx % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
               >
                 <div className={`w-1/2 ${idx % 2 === 0 ? 'pr-12 text-right' : 'pl-12 text-left'}`}>
                   <motion.div 
                     whileHover={{ y: -8, scale: 1.02 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className={`p-6 rounded-2xl border-2 shadow-lg ${
+                    className={`about-block relative p-6 rounded-2xl border-2 shadow-lg overflow-hidden ${
                       isDark 
                         ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-xl hover:shadow-empire-purple/20' 
                         : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-xl hover:shadow-empire-purple/15'
                     }`}
                   >
-                    <div className="flex items-center gap-3 justify-end mb-2">
-                      <span className="text-3xl">{item.icon}</span>
-                      <span className="text-empire-purple font-black text-lg">{item.year}</span>
+                    <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+                    <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+                    
+                    <div className="relative z-10">
+                      <div className={`flex items-center gap-3 mb-2 ${idx % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
+                        <span className="text-3xl">{item.icon}</span>
+                        <span className="text-empire-purple font-black text-lg">{item.year}</span>
+                      </div>
+                      <h3 className={`text-xl font-black mb-2 ${
+                        isDark ? 'text-empire-text' : 'text-light-text'
+                      }`}>{item.title}</h3>
+                      <p className={`text-sm leading-relaxed ${
+                        isDark ? 'text-text-muted' : 'text-gray-600'
+                      }`}>{item.desc}</p>
                     </div>
-                    <h3 className={`text-xl font-black mb-2 ${
-                      isDark ? 'text-empire-text' : 'text-light-text'
-                    }`}>{item.title}</h3>
-                    <p className={`text-sm leading-relaxed ${
-                      isDark ? 'text-text-muted' : 'text-gray-600'
-                    }`}>{item.desc}</p>
                   </motion.div>
                 </div>
                 
@@ -627,37 +750,42 @@ const About = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.0 }}
-          className={`mt-16 p-10 rounded-2xl border-2 text-center shadow-2xl ${
+          transition={{ delay: 2.1 }}
+          className={`about-block relative mt-16 p-10 rounded-2xl border-2 text-center shadow-2xl overflow-hidden ${
             isDark 
               ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
               : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
           }`}
         >
-          <motion.div 
-            className="text-6xl mb-5"
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            💪
-          </motion.div>
-          <h2 className="text-3xl font-black text-empire-purple mb-5">My Philosophy</h2>
-          <p className={`text-lg leading-relaxed max-w-3xl mx-auto ${
-            isDark ? 'text-empire-text/90' : 'text-light-text/90'
-          }`}>
-            <span className="font-bold text-empire-cyan">Discipline</span> is the foundation of everything I do. 
-            I approach life with a <span className="font-bold text-empire-green">cold, calculated mindset</span> and 
-            officer-like qualities, constantly improving each day. I believe in{' '}
-            <span className="font-bold text-empire-purple">learning by doing</span> — struggle is part of growth. 
-            Survival instinct drives me forward. There's no peak or limit, just an endless journey of progress.
-          </p>
+          <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+          <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+          
+          <div className="relative z-10">
+            <motion.div 
+              className="text-6xl mb-5"
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              💪
+            </motion.div>
+            <h2 className="text-3xl font-black text-empire-purple mb-5">My Philosophy</h2>
+            <p className={`text-lg leading-relaxed max-w-3xl mx-auto ${
+              isDark ? 'text-empire-text/90' : 'text-light-text/90'
+            }`}>
+              <span className="font-bold text-empire-cyan">Discipline</span> is the foundation of everything I do. 
+              I approach life with a <span className="font-bold text-empire-green">cold, calculated mindset</span> and 
+              officer-like qualities, constantly improving each day. I believe in{' '}
+              <span className="font-bold text-empire-purple">learning by doing</span> — struggle is part of growth. 
+              Survival instinct drives me forward. <span className="font-bold text-empire-cyan">No peak or limit — just continuous growth and adaptation.</span>
+            </p>
+          </div>
         </motion.div>
       </div>
     </div>
   );
 };
 
-// SKILL CARD - EXACT EDUCATION PATTERN
+// SKILL CARD COMPONENT - ✅ REMOVED whileHover
 const SkillCardNew = ({ skill, isDark, delay }) => {
   const colorMap = {
     'empire-purple': { bg: 'bg-empire-purple/20', text: 'text-empire-purple', border: 'border-empire-purple/50' },
@@ -670,44 +798,44 @@ const SkillCardNew = ({ skill, isDark, delay }) => {
   const colors = colorMap[skill.color];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className={`p-6 rounded-xl border-2 shadow-lg ${
+    <div
+      className={`about-block relative p-6 rounded-xl border-2 shadow-lg overflow-hidden transition-all duration-200 ${
         isDark 
-          ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-xl hover:shadow-empire-purple/20' 
-          : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-xl hover:shadow-empire-purple/15'
+          ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-xl hover:shadow-empire-purple/20 hover:-translate-y-2 hover:scale-[1.02]' 
+          : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-xl hover:shadow-empire-purple/15 hover:-translate-y-2 hover:scale-[1.02]'
       }`}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <motion.span 
-            className="text-3xl"
-            whileHover={{ scale: 1.15, rotate: 15 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            {skill.icon}
-          </motion.span>
-          <span className={`font-black text-lg ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
-            {skill.name}
+      <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+      <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+      
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <motion.span 
+              className="text-3xl"
+              whileHover={{ scale: 1.15, rotate: 15 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              {skill.icon}
+            </motion.span>
+            <span className={`font-black text-lg ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+              {skill.name}
+            </span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-3 mb-3">
+          <span className={`flex-1 px-4 py-2 rounded-lg border-2 ${colors.bg} ${colors.text} ${colors.border} font-bold text-sm text-center`}>
+            {skill.badge}
+          </span>
+          <span className={`px-4 py-2 rounded-lg border-2 font-bold text-sm ${
+            isDark ? 'bg-dark-bg/50 border-empire-purple/30 text-empire-text' : 'bg-light-bg/50 border-empire-purple/25 text-light-text'
+          }`}>
+            {skill.years} yrs
           </span>
         </div>
       </div>
-      
-      <div className="flex items-center gap-3 mb-3">
-        <span className={`flex-1 px-4 py-2 rounded-lg border-2 ${colors.bg} ${colors.text} ${colors.border} font-bold text-sm text-center`}>
-          {skill.badge}
-        </span>
-        <span className={`px-4 py-2 rounded-lg border-2 font-bold text-sm ${
-          isDark ? 'bg-dark-bg/50 border-empire-purple/30 text-empire-text' : 'bg-light-bg/50 border-empire-purple/25 text-light-text'
-        }`}>
-          {skill.years} yrs
-        </span>
-      </div>
-    </motion.div>
+    </div>
   );
 };
 

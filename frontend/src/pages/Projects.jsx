@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
 import { trackProjectView, trackExternalLink, trackButtonClick } from '../services/analytics';
 import { useTheme } from '../context/ThemeContext';
@@ -76,48 +76,91 @@ const Projects = () => {
     <div className={`relative min-h-screen pt-24 pb-16 ${
       isDark ? 'bg-true-black' : 'bg-light-bg'
     }`}>
-      {/* Optimized Styles - ZERO FLICKER */}
       <style>{`
-        @keyframes shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-
-        /* Smooth shimmer for hover effects only */
-        .shimmer-text-hover {
-          background: linear-gradient(
-            90deg,
-            currentColor 0%,
-            currentColor 40%,
-            rgba(6, 182, 212, 1) 50%,
-            currentColor 60%,
-            currentColor 100%
-          );
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          will-change: background-position;
-          transform: translateZ(0);
-          backface-visibility: hidden;
+        * {
           -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
-
-        .group:hover .shimmer-text-hover {
-          animation: shimmer 1.5s linear infinite;
-        }
-
-        /* FIXED: No flicker gradient text */
+        
+        /* GRADIENT TEXT - STABLE */
         .gradient-text-stable {
           display: inline-block;
           background: linear-gradient(90deg, #a855f7 0%, #06b6d4 50%, #a855f7 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          padding: 0.1em 0; /* Prevents clipping */
-          line-height: 1.2; /* Stable height */
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
+          padding: 0.1em 0;
+          line-height: 1.2;
+        }
+
+        /* CONTINUOUS SHIMMER FOR BLOCKS */
+        .block-shimmer-dark {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.08),
+            transparent
+          );
+          animation: blockShimmer 8s linear infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .block-shimmer-light {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(168, 85, 247, 0.2),
+            transparent
+          );
+          animation: blockShimmer 8s linear infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        @keyframes blockShimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        /* GLASS OVERLAY FOR HOVER - INSTANT & SMOOTH */
+        .glass-overlay-dark {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.12) 0%,
+            rgba(6, 182, 212, 0.08) 50%,
+            transparent 100%
+          );
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .glass-overlay-light {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.08) 0%,
+            rgba(6, 182, 212, 0.06) 50%,
+            transparent 100%
+          );
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .project-block:hover .glass-overlay-dark,
+        .project-block:hover .glass-overlay-light {
+          opacity: 1;
         }
 
         .line-clamp-3 {
@@ -127,28 +170,30 @@ const Projects = () => {
           overflow: hidden;
         }
 
-        /* Global anti-flicker */
-        * {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
+        /* PULSING GLOW ANIMATION */
+        @keyframes pulseGlow {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.6; }
+        }
+
+        .pulse-glow {
+          animation: pulseGlow 2s ease-in-out infinite;
         }
       `}</style>
 
       <ParticleBackground theme="default" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Header - COMPLETELY FIXED */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-black mb-4">
-            <span className="gradient-text-stable">
-              Projects Portfolio
-            </span>
+            <span className="gradient-text-stable">Projects Portfolio</span>
           </h1>
-          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+          <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
             isDark ? 'text-text-muted' : 'text-light-muted'
           }`}>
             From neuromorphic VLSI circuits to AI-powered web applications — exploring the intersection of hardware and software
@@ -162,19 +207,23 @@ const Projects = () => {
           transition={{ delay: 0.2 }}
           className="mb-12"
         >
-          <div className={`p-6 rounded-2xl border-2 backdrop-blur-md shadow-2xl ${
+          <div className={`project-block relative p-6 rounded-2xl border-2 shadow-2xl overflow-hidden ${
             isDark 
-              ? 'bg-dark-surface/95 border-empire-purple/40 shadow-empire-purple/10' 
-              : 'bg-white/95 border-empire-purple/30 shadow-empire-purple/5'
+              ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
+              : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
           }`}>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+            <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+            
+            <div className="relative z-10 flex flex-wrap justify-center gap-3">
               {categories.map((category) => (
                 <motion.button
                   key={category}
                   onClick={() => handleFilterChange(category)}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`relative px-6 py-3.5 rounded-xl font-bold text-sm transition-all overflow-hidden ${
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className={`relative px-6 py-3.5 rounded-xl font-bold text-sm transition-all overflow-hidden shadow-md ${
                     filter === category
                       ? 'bg-gradient-to-r from-empire-purple to-empire-cyan text-white shadow-[0_0_30px_rgba(168,85,247,0.6)] border-2 border-white/20'
                       : isDark 
@@ -196,88 +245,72 @@ const Projects = () => {
           </div>
         </motion.div>
 
-        {/* Projects Count - CREATIVE DISPLAY */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mb-8"
-        >
-          <div className={`p-6 rounded-2xl border-2 text-center shadow-lg relative overflow-hidden ${
+        {/* Projects Count - ANIMATED ON CHANGE */}
+        <div className="mb-12">
+          <div className={`project-block relative p-6 rounded-2xl border-2 text-center shadow-xl overflow-hidden ${
             isDark 
               ? 'bg-gradient-to-br from-dark-surface/95 via-dark-bg/95 to-dark-surface/95 border-empire-purple/40 shadow-empire-purple/10' 
               : 'bg-gradient-to-br from-white/95 via-light-surface/95 to-white/95 border-empire-purple/30 shadow-empire-purple/5'
           }`}>
-            {/* Animated background glow */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-empire-purple/5 via-empire-cyan/5 to-empire-purple/5 opacity-50"
-              animate={{ 
-                background: [
-                  'linear-gradient(90deg, rgba(168,85,247,0.05) 0%, rgba(6,182,212,0.05) 50%, rgba(168,85,247,0.05) 100%)',
-                  'linear-gradient(90deg, rgba(6,182,212,0.05) 0%, rgba(168,85,247,0.05) 50%, rgba(6,182,212,0.05) 100%)',
-                  'linear-gradient(90deg, rgba(168,85,247,0.05) 0%, rgba(6,182,212,0.05) 50%, rgba(168,85,247,0.05) 100%)'
-                ]
-              }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            />
+            <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+            <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
             
             <div className="relative z-10 flex items-center justify-center gap-3 flex-wrap">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
-                className="flex items-center gap-2"
-              >
-                <span className={`text-4xl ${isDark ? 'text-empire-purple' : 'text-empire-purple'}`}>
-                  💼
-                </span>
+              <div className="flex items-center gap-2">
+                <span className="text-4xl">💼</span>
                 <span className={`text-base font-bold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
                   Available Projects:
                 </span>
-              </motion.div>
+              </div>
               
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ delay: 0.5, type: "spring", stiffness: 150 }}
-                className="relative"
-              >
-                <div className={`px-6 py-3 rounded-xl border-2 font-black text-3xl shadow-xl ${
-                  isDark
-                    ? 'bg-gradient-to-br from-empire-purple/30 to-empire-cyan/30 border-empire-purple/60 text-empire-purple shadow-empire-purple/30'
-                    : 'bg-gradient-to-br from-empire-purple/20 to-empire-cyan/20 border-empire-purple/50 text-empire-purple shadow-empire-purple/20'
-                }`}>
-                  {filteredProjects.length}
-                </div>
+              {/* ANIMATED COUNT */}
+              <AnimatePresence mode="wait">
                 <motion.div
-                  className="absolute -inset-1 bg-gradient-to-r from-empire-purple to-empire-cyan rounded-xl opacity-0 blur-xl"
-                  animate={{ opacity: [0, 0.3, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </motion.div>
-              
-              {filter !== 'All' && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="flex items-center gap-2"
+                  key={filter + filteredProjects.length}
+                  initial={{ scale: 0, rotate: -180, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0, rotate: 180, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className="relative"
                 >
-                  <span className={`text-sm font-semibold ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
-                    in
-                  </span>
-                  <span className={`px-4 py-2 rounded-lg border-2 font-bold text-sm shadow-md ${
+                  <div className={`px-6 py-3 rounded-xl border-2 font-black text-3xl shadow-xl ${
                     isDark
-                      ? 'bg-empire-cyan/20 border-empire-cyan/50 text-empire-cyan'
-                      : 'bg-empire-cyan/15 border-empire-cyan/40 text-empire-cyan'
+                      ? 'bg-gradient-to-br from-empire-purple/30 to-empire-cyan/30 border-empire-purple/60 text-empire-purple shadow-empire-purple/30'
+                      : 'bg-gradient-to-br from-empire-purple/20 to-empire-cyan/20 border-empire-purple/50 text-empire-purple shadow-empire-purple/20'
                   }`}>
-                    {filter}
-                  </span>
+                    {filteredProjects.length}
+                  </div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-empire-purple to-empire-cyan rounded-xl opacity-30 blur-xl pulse-glow" />
                 </motion.div>
+              </AnimatePresence>
+              
+              {/* ANIMATED CATEGORY BADGE */}
+              {filter !== 'All' && (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={filter}
+                    initial={{ opacity: 0, x: -20, scale: 0.8 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className="flex items-center gap-2"
+                  >
+                    <span className={`text-sm font-semibold ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                      in
+                    </span>
+                    <span className={`px-4 py-2 rounded-lg border-2 font-bold text-sm shadow-md ${
+                      isDark
+                        ? 'bg-empire-cyan/20 border-empire-cyan/50 text-empire-cyan'
+                        : 'bg-empire-cyan/15 border-empire-cyan/40 text-empire-cyan'
+                    }`}>
+                      {filter}
+                    </span>
+                  </motion.div>
+                </AnimatePresence>
               )}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -285,32 +318,17 @@ const Projects = () => {
             const IconComponent = getTechIcon(project.category) || FaCode;
             
             return (
-              <motion.div
+              <div
                 key={project.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + idx * 0.1 }}
-                whileHover={{ y: -10, scale: 1.03 }}
                 onClick={() => handleProjectClick(project.id, project.name)}
-                className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 overflow-hidden cursor-pointer ${
+                className={`project-block relative p-6 rounded-2xl border-2 shadow-xl cursor-pointer overflow-hidden transition-all duration-200 ${
                   isDark 
-                    ? 'bg-gradient-to-br from-dark-surface via-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/70 shadow-xl hover:shadow-2xl hover:shadow-empire-purple/20' 
-                    : 'bg-gradient-to-br from-white via-light-surface to-white border-empire-purple/25 hover:border-empire-purple/60 shadow-xl hover:shadow-2xl hover:shadow-empire-purple/15'
+                    ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20 hover:-translate-y-2 hover:scale-[1.02]' 
+                    : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15 hover:-translate-y-2 hover:scale-[1.02]'
                 }`}
               >
-                {/* Gradient glow overlay */}
-                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
-                  isDark
-                    ? 'bg-gradient-to-br from-empire-purple/10 via-empire-cyan/10 to-empire-green/10'
-                    : 'bg-gradient-to-br from-empire-purple/5 via-empire-cyan/5 to-empire-green/5'
-                }`}></div>
-                
-                {/* Shimmer overlay */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 pointer-events-none"
-                  animate={{ x: ['-100%', '100%'] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                />
+                <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+                <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
                 
                 <div className="relative z-10">
                   {/* Badges */}
@@ -324,12 +342,12 @@ const Projects = () => {
                     </span>
                     <span className={`text-xs px-3 py-2 rounded-lg font-black border-2 shadow-md ${
                       project.status === 'In Development' || project.status === 'Active Development' ? 
-                        'bg-empire-green/30 text-empire-green border-empire-green/60 shadow-empire-green/20' :
+                        'bg-empire-green/25 text-empire-green border-empire-green/50' :
                       project.status === 'Planned' || project.status === 'Research Phase' ? 
-                        'bg-empire-orange/30 text-empire-orange border-empire-orange/60 shadow-empire-orange/20' :
+                        'bg-empire-orange/25 text-empire-orange border-empire-orange/50' :
                       project.status === 'Completed' ?
-                        'bg-empire-cyan/30 text-empire-cyan border-empire-cyan/60 shadow-empire-cyan/20' :
-                        'bg-empire-purple/30 text-empire-purple border-empire-purple/60 shadow-empire-purple/20'
+                        'bg-empire-cyan/25 text-empire-cyan border-empire-cyan/50' :
+                        'bg-empire-purple/25 text-empire-purple border-empire-purple/50'
                     }`}>
                       {project.status}
                     </span>
@@ -339,7 +357,7 @@ const Projects = () => {
                   <h3 className={`text-2xl font-black mb-3 leading-tight ${
                     isDark ? 'text-empire-text' : 'text-light-text'
                   }`}>
-                    <span className="shimmer-text-hover">{project.name}</span>
+                    {project.name}
                   </h3>
                   
                   <p className={`text-sm mb-4 leading-relaxed line-clamp-3 ${
@@ -360,14 +378,12 @@ const Projects = () => {
                         return (
                           <motion.span 
                             key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.5 + idx * 0.1 + i * 0.05 }}
-                            whileHover={{ scale: 1.15, y: -3 }}
-                            className={`group/tech relative flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border-2 font-bold transition-all cursor-default shadow-sm ${
+                            whileHover={{ scale: 1.1, y: -2 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            className={`flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border-2 font-bold transition-all cursor-default shadow-sm ${
                               isDark
-                                ? 'bg-empire-purple/25 text-empire-purple border-empire-purple/50 hover:bg-empire-purple/40 hover:border-empire-purple/70 hover:shadow-empire-purple/30'
-                                : 'bg-empire-purple/15 text-empire-purple border-empire-purple/40 hover:bg-empire-purple/30 hover:border-empire-purple/60 hover:shadow-empire-purple/20'
+                                ? 'bg-empire-purple/20 text-empire-purple border-empire-purple/40 hover:bg-empire-purple/30 hover:border-empire-purple/60'
+                                : 'bg-empire-purple/15 text-empire-purple border-empire-purple/30 hover:bg-empire-purple/25 hover:border-empire-purple/50'
                             }`}
                             title={tech}
                           >
@@ -392,16 +408,17 @@ const Projects = () => {
                   <div className="flex gap-3">
                     {project.github_url && (
                       <motion.button 
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleExternalLink(project.github_url, 'GitHub', project.name);
                         }}
-                        className={`flex-1 py-2.5 rounded-xl border-2 hover:border-empire-purple text-empire-purple transition-all font-bold text-sm shadow-md hover:shadow-lg ${
+                        className={`flex-1 py-2.5 rounded-xl border-2 transition-all font-bold text-sm shadow-md hover:shadow-lg ${
                           isDark 
-                            ? 'bg-dark-bg border-empire-purple/40 hover:bg-dark-surface' 
-                            : 'bg-white border-empire-purple/30 hover:bg-light-surface'
+                            ? 'bg-dark-bg border-empire-purple/40 text-empire-purple hover:bg-dark-surface hover:border-empire-purple/60' 
+                            : 'bg-white border-empire-purple/30 text-empire-purple hover:bg-light-surface hover:border-empire-purple/50'
                         }`}
                       >
                         💻 GitHub
@@ -410,13 +427,18 @@ const Projects = () => {
                     
                     {project.live_url && (
                       <motion.button 
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleExternalLink(project.live_url, 'Live Demo', project.name);
                         }}
-                        className="flex-1 py-2.5 rounded-xl bg-empire-purple/25 text-empire-purple border-2 border-empire-purple/40 hover:bg-empire-purple hover:text-white transition-all font-bold text-sm shadow-md hover:shadow-lg"
+                        className={`flex-1 py-2.5 rounded-xl border-2 transition-all font-bold text-sm shadow-md hover:shadow-lg ${
+                          isDark
+                            ? 'bg-empire-purple/20 text-empire-purple border-empire-purple/40 hover:bg-empire-purple hover:text-white'
+                            : 'bg-empire-purple/15 text-empire-purple border-empire-purple/30 hover:bg-empire-purple hover:text-white'
+                        }`}
                       >
                         🚀 Demo
                       </motion.button>
@@ -424,8 +446,13 @@ const Projects = () => {
                     
                     {!project.github_url && !project.live_url && (
                       <motion.button 
-                        whileHover={{ scale: 1.05 }}
-                        className="flex-1 py-2.5 rounded-xl bg-empire-purple/25 text-empire-purple border-2 border-empire-purple/40 hover:bg-empire-purple hover:text-white transition-all font-bold text-sm shadow-md hover:shadow-lg"
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className={`flex-1 py-2.5 rounded-xl border-2 transition-all font-bold text-sm shadow-md hover:shadow-lg ${
+                          isDark
+                            ? 'bg-empire-purple/20 text-empire-purple border-empire-purple/40 hover:bg-empire-purple hover:text-white'
+                            : 'bg-empire-purple/15 text-empire-purple border-empire-purple/30 hover:bg-empire-purple hover:text-white'
+                        }`}
                       >
                         📄 Details
                       </motion.button>
@@ -434,21 +461,22 @@ const Projects = () => {
                     <motion.button 
                       whileHover={{ scale: 1.15, rotate: 5 }}
                       whileTap={{ scale: 0.9 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleProjectClick(project.id, project.name);
                       }}
-                      className={`px-5 py-2.5 rounded-xl border-2 hover:border-empire-cyan text-empire-cyan transition-all font-black text-lg shadow-md hover:shadow-lg ${
+                      className={`px-5 py-2.5 rounded-xl border-2 transition-all font-black text-lg shadow-md hover:shadow-lg ${
                         isDark 
-                          ? 'bg-dark-bg border-empire-cyan/40 hover:bg-dark-surface' 
-                          : 'bg-white border-empire-cyan/30 hover:bg-light-surface'
+                          ? 'bg-dark-bg border-empire-cyan/40 text-empire-cyan hover:bg-dark-surface hover:border-empire-cyan/60' 
+                          : 'bg-white border-empire-cyan/30 text-empire-cyan hover:bg-light-surface hover:border-empire-cyan/50'
                       }`}
                     >
                       →
                     </motion.button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -458,18 +486,23 @@ const Projects = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className={`p-12 rounded-2xl border-2 text-center shadow-xl ${
+            className={`project-block relative p-12 rounded-2xl border-2 text-center shadow-xl overflow-hidden ${
               isDark 
-                ? 'bg-dark-surface/70 border-empire-purple/40' 
-                : 'bg-white/90 border-empire-purple/30'
+                ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
+                : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
             }`}>
-            <div className="text-6xl mb-4">🔍</div>
-            <p className={`text-xl mb-2 font-bold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
-              No projects found in <span className="text-empire-purple">{filter}</span>
-            </p>
-            <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
-              Try selecting a different category or check back later for updates!
-            </p>
+            <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+            <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+            
+            <div className="relative z-10">
+              <div className="text-6xl mb-4">🔍</div>
+              <p className={`text-xl mb-2 font-bold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+                No projects found in <span className="text-empire-purple">{filter}</span>
+              </p>
+              <p className={`text-sm ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                Try selecting a different category or check back later for updates!
+              </p>
+            </div>
           </motion.div>
         )}
 
@@ -479,17 +512,14 @@ const Projects = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className={`mt-16 p-8 rounded-2xl border-2 text-center relative overflow-hidden shadow-2xl ${
+            className={`project-block relative mt-16 p-8 rounded-2xl border-2 text-center shadow-2xl overflow-hidden ${
               isDark 
-                ? 'bg-dark-surface/90 border-empire-purple/40 shadow-empire-purple/10' 
-                : 'bg-white/95 border-empire-purple/30 shadow-empire-purple/5'
+                ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
+                : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 shadow-empire-purple/5'
             }`}
           >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-empire-purple/5 to-transparent pointer-events-none"
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-            />
+            <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+            <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
             
             <div className="relative z-10">
               <h2 className="text-3xl font-black text-empire-purple mb-3">
@@ -500,8 +530,9 @@ const Projects = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <motion.button 
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                   onClick={() => {
                     trackButtonClick('CTA - Contact from Projects');
                     navigate('/contact');
@@ -510,23 +541,24 @@ const Projects = () => {
                 >
                   <span className="relative z-10">Get In Touch</span>
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none"
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                     animate={{ x: ['-200%', '200%'] }}
                     transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                   />
                 </motion.button>
                 
                 <motion.button 
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                   onClick={() => {
                     trackButtonClick('CTA - GitHub from Projects');
                     window.open('https://github.com/AbyssDrn', '_blank', 'noopener,noreferrer');
                   }}
-                  className={`px-8 py-3.5 border-2 border-empire-cyan rounded-xl font-bold transition-all shadow-md hover:shadow-lg ${
+                  className={`px-8 py-3.5 border-2 rounded-xl font-bold transition-all shadow-md hover:shadow-lg ${
                     isDark 
-                      ? 'text-empire-cyan hover:bg-empire-cyan hover:text-true-black' 
-                      : 'text-empire-cyan hover:bg-empire-cyan hover:text-white'
+                      ? 'border-empire-cyan text-empire-cyan hover:bg-empire-cyan hover:text-true-black' 
+                      : 'border-empire-cyan text-empire-cyan hover:bg-empire-cyan hover:text-white'
                   }`}
                 >
                   View GitHub

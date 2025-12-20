@@ -237,6 +237,20 @@ const About = () => {
           background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
           box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
           flex-shrink: 0;
+          transition: transform 0.2s ease;
+        }
+
+        /* CORE FOCUS LIST ITEM INSTANT HOVER */
+        .core-focus-item {
+          transition: transform 0.2s ease;
+        }
+
+        .core-focus-item:hover {
+          transform: translateX(5px);
+        }
+
+        .core-focus-item:hover .dash-icon {
+          transform: scaleX(1.3);
         }
       `}</style>
 
@@ -333,23 +347,15 @@ const About = () => {
                   'Blockchain, Quantum Computing & Cybersecurity',
                   'Material Technology (Graphene, Advanced Electronics)',
                 ].map((item, idx) => (
-                  <motion.li
+                  <li
                     key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + idx * 0.1, duration: 0.2, ease: "easeOut" }}
-                    whileHover={{ x: 5 }}
-                    className={`flex items-center gap-3 text-base ${
+                    className={`core-focus-item flex items-center gap-3 text-base ${
                       isDark ? 'text-empire-text/90' : 'text-light-text/90'
                     }`}
                   >
-                    <motion.span 
-                      className="dash-icon"
-                      whileHover={{ scaleX: 1.3 }}
-                      transition={{ duration: 0.2 }}
-                    />
+                    <span className="dash-icon" />
                     {item}
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -417,7 +423,7 @@ const About = () => {
           </div>
         </motion.div>
 
-        {/* Undergraduate Projects - ✅ REMOVED whileHover */}
+        {/* Undergraduate Projects */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -502,7 +508,7 @@ const About = () => {
           </div>
         </motion.div>
 
-        {/* Skills - ✅ REMOVED whileHover from skill cards */}
+        {/* Skills */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -574,7 +580,7 @@ const About = () => {
           </div>
         </motion.div>
 
-        {/* Currently Working On - ✅ REMOVED whileHover */}
+        {/* Currently Working On */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -642,7 +648,7 @@ const About = () => {
           </div>
         </motion.div>
 
-        {/* Achievements - ✅ REMOVED whileHover */}
+        {/* Achievements */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -785,7 +791,7 @@ const About = () => {
   );
 };
 
-// SKILL CARD COMPONENT - ✅ REMOVED whileHover
+// SKILL CARD COMPONENT
 const SkillCardNew = ({ skill, isDark, delay }) => {
   const colorMap = {
     'empire-purple': { bg: 'bg-empire-purple/20', text: 'text-empire-purple', border: 'border-empire-purple/50' },

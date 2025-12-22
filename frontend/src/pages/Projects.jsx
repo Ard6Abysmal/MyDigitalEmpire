@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import ParticleBackground from '../components/ParticleBackground';
 import { trackProjectView, trackExternalLink, trackButtonClick } from '../services/analytics';
@@ -65,8 +64,14 @@ const Projects = () => {
         isDark ? 'bg-true-black' : 'bg-light-bg'
       }`}>
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-empire-purple border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className={isDark ? 'text-empire-text' : 'text-light-text'}>Loading projects...</p>
+          <motion.div 
+            className="w-16 h-16 border-4 border-empire-purple border-t-transparent rounded-full mx-auto mb-4"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+          <p className={`font-semibold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
+            Loading projects...
+          </p>
         </div>
       </div>
     );
@@ -93,17 +98,17 @@ const Projects = () => {
           line-height: 1.2;
         }
 
-        /* CONTINUOUS SHIMMER FOR BLOCKS */
+        /* CONTINUOUS SHIMMER FOR BLOCKS - INSTANT & SMOOTH */
         .block-shimmer-dark {
           position: absolute;
           inset: 0;
           background: linear-gradient(
             90deg,
             transparent,
-            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.1),
             transparent
           );
-          animation: blockShimmer 8s linear infinite;
+          animation: blockShimmer 6s linear infinite;
           pointer-events: none;
           z-index: 1;
         }
@@ -114,10 +119,10 @@ const Projects = () => {
           background: linear-gradient(
             90deg,
             transparent,
-            rgba(168, 85, 247, 0.2),
+            rgba(168, 85, 247, 0.15),
             transparent
           );
-          animation: blockShimmer 8s linear infinite;
+          animation: blockShimmer 6s linear infinite;
           pointer-events: none;
           z-index: 1;
         }
@@ -127,18 +132,18 @@ const Projects = () => {
           100% { transform: translateX(100%); }
         }
 
-        /* GLASS OVERLAY FOR HOVER - INSTANT & SMOOTH */
+        /* GLASS OVERLAY FOR HOVER - INSTANT RESPONSE */
         .glass-overlay-dark {
           position: absolute;
           inset: 0;
           background: linear-gradient(
             135deg,
-            rgba(168, 85, 247, 0.12) 0%,
-            rgba(6, 182, 212, 0.08) 50%,
+            rgba(168, 85, 247, 0.15) 0%,
+            rgba(6, 182, 212, 0.1) 50%,
             transparent 100%
           );
           opacity: 0;
-          transition: opacity 0.2s ease;
+          transition: opacity 0.2s ease-out;
           pointer-events: none;
           z-index: 0;
         }
@@ -148,12 +153,12 @@ const Projects = () => {
           inset: 0;
           background: linear-gradient(
             135deg,
-            rgba(168, 85, 247, 0.08) 0%,
-            rgba(6, 182, 212, 0.06) 50%,
+            rgba(168, 85, 247, 0.1) 0%,
+            rgba(6, 182, 212, 0.08) 50%,
             transparent 100%
           );
           opacity: 0;
-          transition: opacity 0.2s ease;
+          transition: opacity 0.2s ease-out;
           pointer-events: none;
           z-index: 0;
         }
@@ -163,6 +168,12 @@ const Projects = () => {
           opacity: 1;
         }
 
+        /* SMOOTH BLOCK TRANSITIONS */
+        .project-block {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* TEXT CLAMPING */
         .line-clamp-3 {
           display: -webkit-box;
           -webkit-line-clamp: 3;
@@ -170,14 +181,49 @@ const Projects = () => {
           overflow: hidden;
         }
 
-        /* PULSING GLOW ANIMATION */
+        /* PULSING GLOW ANIMATION - FASTER */
         @keyframes pulseGlow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.7; }
         }
 
         .pulse-glow {
-          animation: pulseGlow 2s ease-in-out infinite;
+          animation: pulseGlow 1.5s ease-in-out infinite;
+        }
+
+        /* CATEGORY SHIMMER */
+        .category-shimmer {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+          );
+          animation: categoryShimmer 2.5s linear infinite;
+          pointer-events: none;
+        }
+
+        @keyframes categoryShimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        /* FADE ANIMATIONS */
+        @keyframes fadeInUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+
+        .fade-in-up {
+          animation: fadeInUp 0.4s ease-out forwards;
         }
       `}</style>
 
@@ -188,6 +234,7 @@ const Projects = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-black mb-4">
@@ -196,7 +243,11 @@ const Projects = () => {
           <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
             isDark ? 'text-text-muted' : 'text-light-muted'
           }`}>
-            From neuromorphic VLSI circuits to AI-powered web applications — exploring the intersection of hardware and software
+            <span className="font-bold text-empire-cyan">Amal Madhu's</span> engineering journey — 
+            from <span className="font-semibold text-empire-purple">neuromorphic VLSI circuits</span> to{' '}
+            <span className="font-semibold text-empire-cyan">AI-powered applications</span> (BlueDepth-Crescent),{' '}
+            <span className="font-semibold text-empire-green">embedded IoT systems</span>, and{' '}
+            <span className="font-semibold text-empire-orange">full-stack web development</span>
           </p>
         </motion.div>
 
@@ -204,7 +255,7 @@ const Projects = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15, duration: 0.3 }}
           className="mb-12"
         >
           <div className={`project-block relative p-6 rounded-2xl border-2 shadow-2xl overflow-hidden ${
@@ -222,7 +273,7 @@ const Projects = () => {
                   onClick={() => handleFilterChange(category)}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  transition={{ duration: 0.15 }}
                   className={`relative px-6 py-3.5 rounded-xl font-bold text-sm transition-all overflow-hidden shadow-md ${
                     filter === category
                       ? 'bg-gradient-to-r from-empire-purple to-empire-cyan text-white shadow-[0_0_30px_rgba(168,85,247,0.6)] border-2 border-white/20'
@@ -233,11 +284,7 @@ const Projects = () => {
                 >
                   <span className="relative z-10">{category}</span>
                   {filter === category && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                      animate={{ x: ['-200%', '200%'] }}
-                      transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                    />
+                    <div className="category-shimmer" />
                   )}
                 </motion.button>
               ))}
@@ -246,7 +293,12 @@ const Projects = () => {
         </motion.div>
 
         {/* Projects Count - ANIMATED ON CHANGE */}
-        <div className="mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="mb-12"
+        >
           <div className={`project-block relative p-6 rounded-2xl border-2 text-center shadow-xl overflow-hidden ${
             isDark 
               ? 'bg-gradient-to-br from-dark-surface/95 via-dark-bg/95 to-dark-surface/95 border-empire-purple/40 shadow-empire-purple/10' 
@@ -270,7 +322,7 @@ const Projects = () => {
                   initial={{ scale: 0, rotate: -180, opacity: 0 }}
                   animate={{ scale: 1, rotate: 0, opacity: 1 }}
                   exit={{ scale: 0, rotate: 180, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  transition={{ type: "spring", stiffness: 250, damping: 15, duration: 0.3 }}
                   className="relative"
                 >
                   <div className={`px-6 py-3 rounded-xl border-2 font-black text-3xl shadow-xl ${
@@ -292,7 +344,7 @@ const Projects = () => {
                     initial={{ opacity: 0, x: -20, scale: 0.8 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: 20, scale: 0.8 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    transition={{ type: "spring", stiffness: 250, damping: 15, duration: 0.25 }}
                     className="flex items-center gap-2"
                   >
                     <span className={`text-sm font-semibold ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
@@ -310,7 +362,7 @@ const Projects = () => {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -318,10 +370,13 @@ const Projects = () => {
             const IconComponent = getTechIcon(project.category) || FaCode;
             
             return (
-              <div
+              <motion.div
                 key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + idx * 0.05, duration: 0.3 }}
                 onClick={() => handleProjectClick(project.id, project.name)}
-                className={`project-block relative p-6 rounded-2xl border-2 shadow-xl cursor-pointer overflow-hidden transition-all duration-200 ${
+                className={`project-block relative p-6 rounded-2xl border-2 shadow-xl cursor-pointer overflow-hidden ${
                   isDark 
                     ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20 hover:-translate-y-2 hover:scale-[1.02]' 
                     : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15 hover:-translate-y-2 hover:scale-[1.02]'
@@ -379,8 +434,8 @@ const Projects = () => {
                           <motion.span 
                             key={i}
                             whileHover={{ scale: 1.1, y: -2 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                            className={`flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border-2 font-bold transition-all cursor-default shadow-sm ${
+                            transition={{ duration: 0.15 }}
+                            className={`flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border-2 font-bold cursor-default shadow-sm ${
                               isDark
                                 ? 'bg-empire-purple/20 text-empire-purple border-empire-purple/40 hover:bg-empire-purple/30 hover:border-empire-purple/60'
                                 : 'bg-empire-purple/15 text-empire-purple border-empire-purple/30 hover:bg-empire-purple/25 hover:border-empire-purple/50'
@@ -410,12 +465,12 @@ const Projects = () => {
                       <motion.button 
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        transition={{ duration: 0.15 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleExternalLink(project.github_url, 'GitHub', project.name);
                         }}
-                        className={`flex-1 py-2.5 rounded-xl border-2 transition-all font-bold text-sm shadow-md hover:shadow-lg ${
+                        className={`flex-1 py-2.5 rounded-xl border-2 font-bold text-sm shadow-md hover:shadow-lg ${
                           isDark 
                             ? 'bg-dark-bg border-empire-purple/40 text-empire-purple hover:bg-dark-surface hover:border-empire-purple/60' 
                             : 'bg-white border-empire-purple/30 text-empire-purple hover:bg-light-surface hover:border-empire-purple/50'
@@ -429,12 +484,12 @@ const Projects = () => {
                       <motion.button 
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        transition={{ duration: 0.15 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleExternalLink(project.live_url, 'Live Demo', project.name);
                         }}
-                        className={`flex-1 py-2.5 rounded-xl border-2 transition-all font-bold text-sm shadow-md hover:shadow-lg ${
+                        className={`flex-1 py-2.5 rounded-xl border-2 font-bold text-sm shadow-md hover:shadow-lg ${
                           isDark
                             ? 'bg-empire-purple/20 text-empire-purple border-empire-purple/40 hover:bg-empire-purple hover:text-white'
                             : 'bg-empire-purple/15 text-empire-purple border-empire-purple/30 hover:bg-empire-purple hover:text-white'
@@ -447,8 +502,8 @@ const Projects = () => {
                     {!project.github_url && !project.live_url && (
                       <motion.button 
                         whileHover={{ scale: 1.05, y: -2 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                        className={`flex-1 py-2.5 rounded-xl border-2 transition-all font-bold text-sm shadow-md hover:shadow-lg ${
+                        transition={{ duration: 0.15 }}
+                        className={`flex-1 py-2.5 rounded-xl border-2 font-bold text-sm shadow-md hover:shadow-lg ${
                           isDark
                             ? 'bg-empire-purple/20 text-empire-purple border-empire-purple/40 hover:bg-empire-purple hover:text-white'
                             : 'bg-empire-purple/15 text-empire-purple border-empire-purple/30 hover:bg-empire-purple hover:text-white'
@@ -461,12 +516,12 @@ const Projects = () => {
                     <motion.button 
                       whileHover={{ scale: 1.15, rotate: 5 }}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      transition={{ duration: 0.15 }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleProjectClick(project.id, project.name);
                       }}
-                      className={`px-5 py-2.5 rounded-xl border-2 transition-all font-black text-lg shadow-md hover:shadow-lg ${
+                      className={`px-5 py-2.5 rounded-xl border-2 font-black text-lg shadow-md hover:shadow-lg ${
                         isDark 
                           ? 'bg-dark-bg border-empire-cyan/40 text-empire-cyan hover:bg-dark-surface hover:border-empire-cyan/60' 
                           : 'bg-white border-empire-cyan/30 text-empire-cyan hover:bg-light-surface hover:border-empire-cyan/50'
@@ -476,7 +531,7 @@ const Projects = () => {
                     </motion.button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -484,8 +539,9 @@ const Projects = () => {
         {/* Empty State */}
         {filteredProjects.length === 0 && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
             className={`project-block relative p-12 rounded-2xl border-2 text-center shadow-xl overflow-hidden ${
               isDark 
                 ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
@@ -495,7 +551,13 @@ const Projects = () => {
             <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
             
             <div className="relative z-10">
-              <div className="text-6xl mb-4">🔍</div>
+              <motion.div
+                className="text-6xl mb-4"
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                🔍
+              </motion.div>
               <p className={`text-xl mb-2 font-bold ${isDark ? 'text-empire-text' : 'text-light-text'}`}>
                 No projects found in <span className="text-empire-purple">{filter}</span>
               </p>
@@ -511,7 +573,7 @@ const Projects = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
             className={`project-block relative mt-16 p-8 rounded-2xl border-2 text-center shadow-2xl overflow-hidden ${
               isDark 
                 ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 shadow-empire-purple/10' 
@@ -522,17 +584,28 @@ const Projects = () => {
             <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
             
             <div className="relative z-10">
+              <motion.div
+                className="text-6xl mb-4"
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                🤝
+              </motion.div>
               <h2 className="text-3xl font-black text-empire-purple mb-3">
                 Interested in collaborating?
               </h2>
-              <p className={`mb-6 text-lg ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
-                I'm always open to discussing new projects, creative ideas, or opportunities to contribute to ambitious initiatives.
+              <p className={`mb-6 text-lg max-w-2xl mx-auto ${isDark ? 'text-text-muted' : 'text-gray-600'}`}>
+                <span className="font-bold text-empire-cyan">Amal Madhu</span> is always open to discussing{' '}
+                <span className="font-semibold text-empire-purple">AI/ML projects</span>,{' '}
+                <span className="font-semibold text-empire-green">embedded systems</span>,{' '}
+                <span className="font-semibold text-empire-orange">VLSI design</span>, or{' '}
+                <span className="font-semibold text-empire-pink">full-stack development</span> opportunities.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <motion.button 
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  transition={{ duration: 0.15 }}
                   onClick={() => {
                     trackButtonClick('CTA - Contact from Projects');
                     navigate('/contact');
@@ -540,22 +613,18 @@ const Projects = () => {
                   className="relative px-8 py-3.5 bg-gradient-to-r from-empire-purple to-empire-cyan rounded-xl font-bold text-white shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:shadow-[0_0_50px_rgba(168,85,247,0.9)] transition-all overflow-hidden"
                 >
                   <span className="relative z-10">Get In Touch</span>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                    animate={{ x: ['-200%', '200%'] }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                  />
+                  <div className="category-shimmer" />
                 </motion.button>
                 
                 <motion.button 
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  transition={{ duration: 0.15 }}
                   onClick={() => {
                     trackButtonClick('CTA - GitHub from Projects');
                     window.open('https://github.com/AbyssDrn', '_blank', 'noopener,noreferrer');
                   }}
-                  className={`px-8 py-3.5 border-2 rounded-xl font-bold transition-all shadow-md hover:shadow-lg ${
+                  className={`px-8 py-3.5 border-2 rounded-xl font-bold shadow-md hover:shadow-lg ${
                     isDark 
                       ? 'border-empire-cyan text-empire-cyan hover:bg-empire-cyan hover:text-true-black' 
                       : 'border-empire-cyan text-empire-cyan hover:bg-empire-cyan hover:text-white'

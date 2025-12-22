@@ -1,7 +1,8 @@
 // import { useState, useEffect } from 'react';
 // import BentoGrid from './components/BentoGrid';
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navigation/Navbar';
 import ChatWidget from './components/Chatbot/ChatWidget';
 import ParticleBackground from './components/ParticleBackground';
@@ -33,9 +34,72 @@ function AnalyticsTracker() {
   return null;
 }
 
-function App() {
+// Main App Content Component (needs to be inside Router to use useLocation)
+function AppContent() {
   const { isDark } = useTheme(); // Get theme state
+  const location = useLocation(); // Get current location for AnimatePresence
 
+  useEffect(() => {
+    // Initialize Google Analytics
+    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    if (measurementId) {
+      initGA(measurementId);
+    }
+  }, []);
+
+  return (
+    <div 
+      className={`min-h-screen transition-colors duration-300 ${
+        isDark 
+          ? 'bg-true-black text-empire-text' 
+          : 'bg-light-bg text-light-text'
+      }`}
+    >
+      {/* Global background particles */}
+      <ParticleBackground />
+      
+      {/* Navigation bar */}
+      <Navbar />
+      
+      {/* Analytics tracking */}
+      <AnalyticsTracker />
+
+      {/* Route definitions for Digital Empire Portfolio - Amal Madhu */}
+      {/* AnimatePresence enables page transition animations */}
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} /> {/* NEW - Project detail page */}
+          <Route path="/skills" element={<Skills />} />
+          <Route path="/contact" element={<Contact />} />
+          
+          {/* Blog Routes */}
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} /> {/* NEW - Redirect /admin to /admin/dashboard */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/resume" element={<AdminResume />} />
+          <Route path="/admin/analytics" element={<Analytics />} /> {/* Analytics page */}
+          
+          {/* 404 - Redirect to home (optional) */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AnimatePresence>
+
+      {/* AI Chatbot Widget - Available on all pages */}
+      <ChatWidget />
+    </div>
+  );
+}
+
+function App() {
+  // OLD: Fetch projects directly in App.jsx (now handled per page)
   // const [projects, setProjects] = useState([]);
   // const [loading, setLoading] = useState(true);
 
@@ -62,49 +126,15 @@ function App() {
   //   );
   // }
 
-  useEffect(() => {
-    // Initialize Google Analytics
-    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    if (measurementId) {
-      initGA(measurementId);
-    }
-  }, []);
-
   return (
+    // OLD: Simple layout with BentoGrid
     // <div className="min-h-screen bg-empire-dark">
     //   <BentoGrid projects={projects} />
     //   <ChatWidget /> {/* Add this line */}
     // </div>
     
     <Router>
-      <div 
-        className={`min-h-screen transition-colors duration-300 ${
-          isDark 
-            ? 'bg-true-black text-empire-text' 
-            : 'bg-light-bg text-light-text'
-        }`}
-      >
-        <ParticleBackground /> {/* Background particles */}
-        <Navbar />
-        <AnalyticsTracker /> {/* Track page views */}
-
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/projects/:id" element={<ProjectDetail />} /> {/* NEW - Project detail page */}
-          <Route path="/skills" element={<Skills />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/resume" element={<AdminResume />} />
-          <Route path="/admin/analytics" element={<Analytics />} /> {/* Analytics page */}
-        </Routes>
-
-        <ChatWidget />
-      </div>
+      <AppContent />
     </Router>
   );
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Clock, Eye, Sparkles, User, Calendar } from 'lucide-react';
 import ParticleBackground from '../components/ParticleBackground';
 import { trackBlogView } from '../services/analytics';
 import { useTheme } from '../context/ThemeContext';
@@ -18,7 +19,7 @@ const BlogPost = () => {
 
   useEffect(() => {
     fetchPost();
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
@@ -58,10 +59,41 @@ const BlogPost = () => {
       <div className={`min-h-screen flex items-center justify-center ${
         isDark ? 'bg-true-black' : 'bg-light-bg'
       }`}>
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-empire-purple border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className={isDark ? 'text-empire-text' : 'text-light-text'}>Loading post...</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="relative mb-6">
+            <motion.div 
+              className="w-20 h-20 border-4 border-empire-purple border-t-transparent rounded-full mx-auto"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              <Sparkles className="text-empire-purple" size={28} />
+            </motion.div>
+          </div>
+          <motion.p 
+            className={`text-lg font-bold ${isDark ? 'text-empire-text' : 'text-light-text'}`}
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            Loading blog post...
+          </motion.p>
+          <motion.p
+            className="text-empire-purple text-sm mt-2 font-semibold"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            by Amal Madhu
+          </motion.p>
+        </motion.div>
       </div>
     );
   }
@@ -73,21 +105,35 @@ const BlogPost = () => {
       }`}>
         <div className="text-center">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
             className="text-8xl mb-6"
           >
             📝
           </motion.div>
-          <h2 className={`text-3xl font-black mb-4 ${
-            isDark ? 'text-empire-text' : 'text-light-text'
-          }`}>Post not found</h2>
-          <Link 
-            to="/blog" 
-            className="text-empire-purple hover:text-empire-cyan transition-colors font-bold text-lg"
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`text-3xl font-black mb-4 ${
+              isDark ? 'text-empire-text' : 'text-light-text'
+            }`}
           >
-            ← Back to Blog
-          </Link>
+            Blog post not found
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Link 
+              to="/blog" 
+              className="inline-flex items-center gap-2 text-empire-purple hover:text-empire-cyan transition-colors font-bold text-lg group"
+            >
+              <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+              Back to Amal's Blog
+            </Link>
+          </motion.div>
         </div>
       </div>
     );
@@ -159,7 +205,7 @@ const BlogPost = () => {
             transparent 100%
           );
           opacity: 0;
-          transition: opacity 0.2s ease;
+          transition: opacity 0.3s ease;
           pointer-events: none;
           z-index: 0;
         }
@@ -174,7 +220,7 @@ const BlogPost = () => {
             transparent 100%
           );
           opacity: 0;
-          transition: opacity 0.2s ease;
+          transition: opacity 0.3s ease;
           pointer-events: none;
           z-index: 0;
         }
@@ -266,121 +312,185 @@ const BlogPost = () => {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+
+        /* Pulse animation for buttons */
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+          50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+        }
+
+        .btn-glow:hover {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
       `}</style>
 
       <ParticleBackground theme="default" />
       
-      <div className="relative z-10 max-w-4xl mx-auto px-6">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6">
         {/* Back Button */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <Link 
             to="/blog"
-            className="inline-flex items-center gap-2 text-empire-purple hover:text-empire-cyan transition-colors font-bold mb-8 text-lg"
+            className="inline-flex items-center gap-2 text-empire-purple hover:text-empire-cyan transition-all duration-300 font-bold mb-8 text-base md:text-lg group"
           >
-            ← Back to Blog
+            <ArrowLeft size={20} className="group-hover:-translate-x-2 transition-transform duration-300" />
+            Back to Blog
           </Link>
         </motion.div>
 
         <motion.article
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`blog-block relative rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-200 ${
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={`blog-block relative rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-300 ${
             isDark 
-              ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:shadow-empire-purple/20' 
-              : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:shadow-empire-purple/15'
+              ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-empire-purple/20' 
+              : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-empire-purple/15'
           }`}
         >
           <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
           <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
 
           {/* Header Image */}
-          {post.image_url && (
-            <div className="relative h-96 overflow-hidden">
-              <img
-                src={post.image_url}
-                alt={post.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/1200x600/a855f7/ffffff?text=Blog+Post';
-                }}
-              />
-              {post.featured && (
-                <div className="absolute top-6 right-6 bg-gradient-to-r from-empire-purple to-empire-pink text-white px-6 py-2 rounded-full text-sm font-black shadow-xl">
-                  ⭐ Featured
-                </div>
-              )}
-            </div>
-          )}
+          <AnimatePresence>
+            {post.image_url && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+                className="relative h-80 md:h-96 overflow-hidden"
+              >
+                <motion.img
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.4 }}
+                  src={post.image_url}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/1200x600/a855f7/ffffff?text=Blog+Post';
+                  }}
+                />
+                {post.featured && (
+                  <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="absolute top-4 md:top-6 right-4 md:right-6 bg-gradient-to-r from-empire-purple to-empire-pink text-white px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-black shadow-xl"
+                  >
+                    ⭐ Featured
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Content */}
-          <div className="p-8 md:p-12 relative z-10">
+          <div className="p-6 md:p-12 relative z-10">
             {/* Meta */}
-            <div className="flex items-center gap-4 mb-6 flex-wrap">
-              <span className="px-4 py-1.5 rounded-lg bg-empire-cyan/20 text-empire-cyan border-2 border-empire-cyan/40 text-sm font-bold">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex items-center gap-3 md:gap-4 mb-6 flex-wrap"
+            >
+              <span className="px-3 md:px-4 py-1.5 rounded-lg bg-empire-cyan/20 text-empire-cyan border-2 border-empire-cyan/40 text-xs md:text-sm font-bold">
                 {post.category}
               </span>
-              <span className={`text-sm font-semibold flex items-center gap-1 ${
+              <span className={`text-xs md:text-sm font-semibold flex items-center gap-1.5 ${
                 isDark ? 'text-text-muted' : 'text-light-muted'
               }`}>
-                📅 {new Date(post.created_at).toLocaleDateString('en-US', {
+                <Calendar size={16} className="text-empire-purple" />
+                {new Date(post.created_at).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric'
                 })}
               </span>
-              <span className={`text-sm font-semibold flex items-center gap-1 ${
+              <span className={`text-xs md:text-sm font-semibold flex items-center gap-1.5 ${
                 isDark ? 'text-text-muted' : 'text-light-muted'
               }`}>
-                👁️ {post.views || 0} views
+                <Eye size={16} className="text-empire-cyan" />
+                {post.views || 0} views
               </span>
               {post.read_time && (
-                <span className={`text-sm font-semibold flex items-center gap-1 ${
+                <span className={`text-xs md:text-sm font-semibold flex items-center gap-1.5 ${
                   isDark ? 'text-text-muted' : 'text-light-muted'
                 }`}>
-                  ⏱️ {post.read_time} min read
+                  <Clock size={16} className="text-empire-green" />
+                  {post.read_time} min read
                 </span>
               )}
-            </div>
+            </motion.div>
 
             {/* Title */}
-            <h1 className={`text-4xl md:text-5xl font-black mb-6 leading-tight ${
-              isDark ? 'text-empire-text' : 'text-light-text'
-            }`}>
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className={`text-3xl md:text-5xl font-black mb-4 md:mb-6 leading-tight ${
+                isDark ? 'text-empire-text' : 'text-light-text'
+              }`}
+            >
               {post.title}
-            </h1>
+            </motion.h1>
 
             {/* Excerpt */}
             {post.excerpt && (
-              <p className={`text-xl mb-8 leading-relaxed ${
-                isDark ? 'text-text-muted' : 'text-light-muted'
-              }`}>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className={`text-lg md:text-xl mb-6 md:mb-8 leading-relaxed ${
+                  isDark ? 'text-text-muted' : 'text-light-muted'
+                }`}
+              >
                 {post.excerpt}
-              </p>
+              </motion.p>
             )}
 
-            {/* Author */}
-            <div className={`flex items-center gap-4 mb-8 pb-8 border-b-2 ${
-              isDark ? 'border-dark-border' : 'border-light-border'
-            }`}>
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-empire-purple to-empire-cyan flex items-center justify-center text-white font-black text-2xl shadow-lg">
+            {/* Author - Amal Madhu */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className={`flex items-center gap-4 mb-6 md:mb-8 pb-6 md:pb-8 border-b-2 ${
+                isDark ? 'border-dark-border' : 'border-light-border'
+              }`}
+            >
+              <motion.div 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ duration: 0.3 }}
+                className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-empire-purple to-empire-cyan flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-lg"
+              >
                 {(post.author || 'Amal Madhu').charAt(0)}
-              </div>
+              </motion.div>
               <div>
-                <p className={`font-black text-lg ${
+                <p className={`font-black text-base md:text-lg flex items-center gap-2 ${
                   isDark ? 'text-empire-text' : 'text-light-text'
-                }`}>{post.author || 'Amal Madhu'}</p>
-                <p className={`text-sm font-semibold ${
+                }`}>
+                  <User size={16} className="text-empire-purple" />
+                  {post.author || 'Amal Madhu'}
+                </p>
+                <p className={`text-xs md:text-sm font-semibold ${
                   isDark ? 'text-text-muted' : 'text-light-muted'
-                }`}>AI/ML Engineer • VLSI Designer • Full-Stack Developer</p>
+                }`}>
+                  <span className="text-empire-purple">AI/ML Engineer</span> •{' '}
+                  <span className="text-empire-cyan">VLSI Designer</span> •{' '}
+                  <span className="text-empire-green">Full-Stack Developer</span>
+                </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Content */}
-            <div 
-              className={`prose prose-lg max-w-none mb-12 ${
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className={`prose prose-lg max-w-none mb-8 md:mb-12 ${
                 isDark ? 'prose-invert' : 'prose-light'
               }`}
               style={{
@@ -389,24 +499,31 @@ const BlogPost = () => {
               }}
             >
               <div dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br/>') }} />
-            </div>
+            </motion.div>
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
-              <div className={`flex flex-wrap gap-3 pt-8 border-t-2 ${
-                isDark ? 'border-dark-border' : 'border-light-border'
-              }`}>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+                className={`flex flex-wrap gap-2 md:gap-3 pt-6 md:pt-8 border-t-2 ${
+                  isDark ? 'border-dark-border' : 'border-light-border'
+                }`}
+              >
                 {post.tags.map((tag, i) => (
                   <motion.span
                     key={i}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="px-4 py-2 bg-empire-purple/15 text-empire-purple rounded-lg text-sm border-2 border-empire-purple/30 font-bold cursor-pointer"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8 + i * 0.05, type: "spring", stiffness: 200 }}
+                    whileHover={{ scale: 1.15, y: -3, rotate: 2 }}
+                    className="px-3 md:px-4 py-2 bg-empire-purple/15 text-empire-purple rounded-lg text-xs md:text-sm border-2 border-empire-purple/30 font-bold cursor-pointer hover:bg-empire-purple/25 hover:border-empire-purple/50 transition-all"
                   >
                     #{tag}
                   </motion.span>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         </motion.article>
@@ -414,64 +531,72 @@ const BlogPost = () => {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="mt-16"
           >
-            <h2 className={`text-3xl font-black mb-8 ${
+            <h2 className={`text-2xl md:text-3xl font-black mb-8 ${
               isDark ? 'text-empire-text' : 'text-light-text'
             }`}>
               <span className="gradient-text-stable">Related Posts</span>
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-4 md:gap-6">
               {relatedPosts.map((relatedPost, idx) => (
-                <Link 
-                  key={relatedPost.id} 
-                  to={`/blog/${relatedPost.slug}`}
-                  onClick={() => window.scrollTo(0, 0)}
+                <motion.div
+                  key={relatedPost.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + idx * 0.1, duration: 0.5 }}
                 >
-                  <div
-                    className={`blog-block relative rounded-xl overflow-hidden border-2 shadow-xl h-full transition-all duration-200 ${
-                      isDark 
-                        ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20 hover:-translate-y-2 hover:scale-[1.02]' 
-                        : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15 hover:-translate-y-2 hover:scale-[1.02]'
-                    }`}
+                  <Link 
+                    to={`/blog/${relatedPost.slug}`}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                   >
-                    <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
-                    <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
+                    <div
+                      className={`blog-block relative rounded-xl overflow-hidden border-2 shadow-xl h-full transition-all duration-300 ${
+                        isDark 
+                          ? 'bg-gradient-to-br from-dark-surface to-dark-bg border-empire-purple/30 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20 hover:-translate-y-2 hover:scale-[1.02]' 
+                          : 'bg-gradient-to-br from-white to-light-surface border-empire-purple/25 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15 hover:-translate-y-2 hover:scale-[1.02]'
+                      }`}
+                    >
+                      <div className={isDark ? 'block-shimmer-dark' : 'block-shimmer-light'} />
+                      <div className={isDark ? 'glass-overlay-dark' : 'glass-overlay-light'} />
 
-                    {relatedPost.image_url && (
-                      <div className="relative h-40 overflow-hidden">
-                        <img
-                          src={relatedPost.image_url}
-                          alt={relatedPost.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/400x300/a855f7/ffffff?text=Blog+Post';
-                          }}
-                        />
+                      {relatedPost.image_url && (
+                        <div className="relative h-36 md:h-40 overflow-hidden">
+                          <motion.img
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ duration: 0.4 }}
+                            src={relatedPost.image_url}
+                            alt={relatedPost.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/400x300/a855f7/ffffff?text=Blog+Post';
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      <div className="p-4 relative z-10">
+                        <span className="text-xs px-2 md:px-3 py-1.5 rounded-lg bg-empire-cyan/20 text-empire-cyan border-2 border-empire-cyan/40 font-bold inline-block mb-2">
+                          {relatedPost.category}
+                        </span>
+                        <h3 className={`text-base md:text-lg font-black mb-2 line-clamp-2 ${
+                          isDark ? 'text-empire-text' : 'text-light-text'
+                        }`}>
+                          {relatedPost.title}
+                        </h3>
+                        <p className={`text-xs md:text-sm line-clamp-2 ${
+                          isDark ? 'text-text-muted' : 'text-light-muted'
+                        }`}>
+                          {relatedPost.excerpt}
+                        </p>
                       </div>
-                    )}
-
-                    <div className="p-4 relative z-10">
-                      <span className="text-xs px-3 py-1.5 rounded-lg bg-empire-cyan/20 text-empire-cyan border-2 border-empire-cyan/40 font-bold inline-block mb-2">
-                        {relatedPost.category}
-                      </span>
-                      <h3 className={`text-lg font-black mb-2 line-clamp-2 ${
-                        isDark ? 'text-empire-text' : 'text-light-text'
-                      }`}>
-                        {relatedPost.title}
-                      </h3>
-                      <p className={`text-sm line-clamp-2 ${
-                        isDark ? 'text-text-muted' : 'text-light-muted'
-                      }`}>
-                        {relatedPost.excerpt}
-                      </p>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -479,10 +604,10 @@ const BlogPost = () => {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className={`blog-block relative mt-16 p-10 rounded-2xl border-2 text-center shadow-2xl overflow-hidden transition-all duration-200 ${
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className={`blog-block relative mt-16 p-8 md:p-10 rounded-2xl border-2 text-center shadow-2xl overflow-hidden transition-all duration-300 ${
             isDark 
               ? 'bg-gradient-to-br from-dark-surface/95 to-dark-bg/95 border-empire-purple/40 hover:border-empire-purple/60 hover:shadow-2xl hover:shadow-empire-purple/20 hover:-translate-y-2' 
               : 'bg-gradient-to-br from-white/95 to-light-surface/95 border-empire-purple/30 hover:border-empire-purple/50 hover:shadow-2xl hover:shadow-empire-purple/15 hover:-translate-y-2'
@@ -493,41 +618,48 @@ const BlogPost = () => {
           
           <div className="relative z-10">
             <motion.div 
-              className="text-6xl mb-5"
+              className="text-5xl md:text-6xl mb-5"
               animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
               💬
             </motion.div>
-            <h2 className="text-3xl font-black text-empire-purple mb-5">Enjoyed this post?</h2>
-            <p className={`text-lg leading-relaxed max-w-2xl mx-auto mb-6 ${
+            <h2 className="text-2xl md:text-3xl font-black text-empire-purple mb-4 md:mb-5">
+              Enjoyed this post?
+            </h2>
+            <p className={`text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-6 ${
               isDark ? 'text-empire-text/90' : 'text-light-text/90'
             }`}>
-              Let's discuss your ideas on AI/ML, neuromorphic VLSI, embedded systems, or web development. 
-              I'm always excited to collaborate on innovative projects!
+              <span className="font-bold text-empire-cyan">Amal Madhu</span> loves discussing ideas on{' '}
+              <span className="font-semibold text-empire-purple">AI/ML</span>,{' '}
+              <span className="font-semibold text-empire-cyan">computer vision</span>,{' '}
+              <span className="font-semibold text-empire-green">neuromorphic VLSI</span>,{' '}
+              <span className="font-semibold text-empire-orange">embedded systems</span>, and{' '}
+              <span className="font-semibold text-pink-500">web development</span>. 
+              Let's collaborate on innovative projects!
             </p>
-            <div className="flex gap-4 justify-center flex-wrap">
+            <div className="flex gap-3 md:gap-4 justify-center flex-wrap">
               <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 onClick={() => navigate('/contact')}
-                className="relative px-8 py-3 rounded-xl bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold shadow-lg hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all overflow-hidden"
+                className="btn-glow relative px-6 md:px-8 py-3 rounded-xl bg-gradient-to-r from-empire-purple to-empire-cyan text-white font-bold shadow-lg hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all overflow-hidden"
               >
                 <span className="relative z-10">Get In Touch</span>
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                   animate={{ x: ['-200%', '200%'] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                  transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
                 />
               </motion.button>
               
               <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 onClick={() => navigate('/blog')}
-                className={`px-8 py-3 rounded-xl border-2 font-bold transition-all shadow-lg ${
+                className={`px-6 md:px-8 py-3 rounded-xl border-2 font-bold transition-all shadow-lg ${
                   isDark
                     ? 'bg-dark-surface border-empire-purple text-empire-text hover:bg-empire-purple/10 hover:shadow-empire-purple/20'
                     : 'bg-light-surface border-empire-purple text-light-text hover:bg-empire-purple/10 hover:shadow-empire-purple/15'
